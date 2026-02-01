@@ -41,29 +41,13 @@ fn draw_header(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::T
         Span::styled("ready", base.fg(theme.palette.success)),
     ]);
 
-    let info = Line::from(vec![
-        Span::styled(
-            format!("Theme: {}", app.current_theme_name()),
-            base.fg(theme.palette.fg),
-        ),
-        Span::raw(" | "),
-        Span::styled(
-            format!("High contrast: {}", on_off(app.high_contrast)),
-            base.fg(theme.palette.muted),
-        ),
-        Span::raw(" | "),
-        Span::styled(
-            format!("No color: {}", on_off(app.no_color)),
-            base.fg(theme.palette.muted),
-        ),
-        Span::raw(" | "),
-        Span::styled(
-            format!("Reduced motion: {}", on_off(app.reduced_motion)),
-            base.fg(theme.palette.muted),
-        ),
-    ]);
+    let info_lines = header_info_lines(area, app, base, theme);
 
-    let header = Paragraph::new(Text::from(vec![title, info]))
+    let mut lines = Vec::with_capacity(1 + info_lines.len());
+    lines.push(title);
+    lines.extend(info_lines);
+
+    let header = Paragraph::new(Text::from(lines))
         .alignment(Alignment::Left)
         .block(
             Block::default()
@@ -78,11 +62,6 @@ fn draw_header(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::T
 fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::Theme) {
     let base = Style::default().fg(theme.palette.fg).bg(theme.palette.bg);
 
-    let columns = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(52), Constraint::Percentage(48)])
-        .split(area);
-
     let commands = List::new(vec![
         ListItem::new("cli-tui-starter demo --theme aurora"),
         ListItem::new("cli-tui-starter themes"),
@@ -95,13 +74,6 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
             .border_style(Style::default().fg(theme.palette.muted)),
     )
     .style(base);
-
-    frame.render_widget(commands, columns[0]);
-
-    let right = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(55), Constraint::Percentage(45)])
-        .split(columns[1]);
 
     let theme_info = Paragraph::new(Text::from(vec![
         Line::from(Span::styled(
@@ -124,8 +96,6 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
     )
     .style(base);
 
-    frame.render_widget(theme_info, right[0]);
-
     let accessibility = Paragraph::new(Text::from(vec![
         Line::from(Span::styled(
             "h: high contrast",
@@ -144,7 +114,35 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
     )
     .style(base);
 
-    frame.render_widget(accessibility, right[1]);
+    if is_narrow(area) {
+        let stack = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Length(7),
+                Constraint::Length(7),
+                Constraint::Min(0),
+            ])
+            .split(area);
+
+        frame.render_widget(commands, stack[0]);
+        frame.render_widget(theme_info, stack[1]);
+        frame.render_widget(accessibility, stack[2]);
+    } else {
+        let columns = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(52), Constraint::Percentage(48)])
+            .split(area);
+
+        frame.render_widget(commands, columns[0]);
+
+        let right = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Percentage(55), Constraint::Percentage(45)])
+            .split(columns[1]);
+
+        frame.render_widget(theme_info, right[0]);
+        frame.render_widget(accessibility, right[1]);
+    }
 }
 
 fn draw_footer(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
@@ -168,7 +166,7 @@ fn draw_footer(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
 
 fn draw_help(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
     let base = Style::default().fg(theme.palette.fg).bg(theme.palette.bg);
-    let popup_area = centered_rect(70, 60, area);
+    let popup_area = centered_popup_rect(area);
 
     let help_text = Paragraph::new(Text::from(vec![
         Line::from(Span::styled(
@@ -211,24 +209,72 @@ fn on_off(value: bool) -> &'static str {
     }
 }
 
-fn centered_rect(percent_x: u16, percent_y: u16, rect: Rect) -> Rect {
-    let popup_layout = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Percentage((100 - percent_y) / 2),
-            Constraint::Percentage(percent_y),
-            Constraint::Percentage((100 - percent_y) / 2),
-        ])
-        .split(rect);
+fn is_narrow(area: Rect) -> bool {
+    area.width < 90
+}
 
-    let horizontal = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage((100 - percent_x) / 2),
-            Constraint::Percentage(percent_x),
-            Constraint::Percentage((100 - percent_x) / 2),
-        ])
-        .split(popup_layout[1]);
+fn header_info_lines(
+    area: Rect,
+    app: &App,
+    base: Style,
+    theme: &crate::theme::Theme,
+) -> Vec<Line<'static>> {
+    let theme_label = Span::styled(
+        format!("Theme: {}", app.current_theme_name()),
+        base.fg(theme.palette.fg),
+    );
 
-    horizontal[1]
+    let high_contrast = Span::styled(
+        format!("HC: {}", on_off(app.high_contrast)),
+        base.fg(theme.palette.muted),
+    );
+
+    let color = Span::styled(
+        format!("Color: {}", on_off(!app.no_color)),
+        base.fg(theme.palette.muted),
+    );
+
+    let reduced_motion = Span::styled(
+        format!("Motion: {}", on_off(app.reduced_motion)),
+        base.fg(theme.palette.muted),
+    );
+
+    if area.width < 62 {
+        vec![
+            Line::from(vec![theme_label, Span::raw(" | "), high_contrast]),
+            Line::from(vec![color, Span::raw(" | "), reduced_motion]),
+        ]
+    } else {
+        vec![Line::from(vec![
+            theme_label,
+            Span::raw(" | "),
+            high_contrast,
+            Span::raw(" | "),
+            color,
+            Span::raw(" | "),
+            reduced_motion,
+        ])]
+    }
+}
+
+fn centered_popup_rect(area: Rect) -> Rect {
+    if area.width <= 2 || area.height <= 2 {
+        return area;
+    }
+
+    let max_width = area.width.saturating_sub(4);
+    let max_height = area.height.saturating_sub(2);
+
+    let width = max_width.clamp(20, 84);
+    let height = max_height.clamp(10, 16);
+
+    let x = area.x + (area.width.saturating_sub(width)) / 2;
+    let y = area.y + (area.height.saturating_sub(height)) / 2;
+
+    Rect {
+        x,
+        y,
+        width,
+        height,
+    }
 }
