@@ -65,8 +65,7 @@ impl App {
                 ..
             }
             | KeyEvent {
-                code: KeyCode::Esc,
-                ..
+                code: KeyCode::Esc, ..
             } => {
                 self.should_quit = true;
             }

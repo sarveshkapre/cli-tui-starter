@@ -86,4 +86,3 @@ fn print_keys() {
     out.push_str("- q/esc: quit\n");
     print!("{}", out);
 }
-

@@ -65,9 +65,11 @@ fn draw_header(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::T
 
     let header = Paragraph::new(Text::from(vec![title, info]))
         .alignment(Alignment::Left)
-        .block(Block::default().borders(Borders::ALL).border_style(
-            Style::default().fg(theme.palette.muted),
-        ))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(theme.palette.muted)),
+        )
         .style(base);
 
     frame.render_widget(header, area);
@@ -125,7 +127,10 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
     frame.render_widget(theme_info, right[0]);
 
     let accessibility = Paragraph::new(Text::from(vec![
-        Line::from(Span::styled("h: high contrast", base.fg(theme.palette.accent))),
+        Line::from(Span::styled(
+            "h: high contrast",
+            base.fg(theme.palette.accent),
+        )),
         Line::from("c: toggle color"),
         Line::from("r: reduced motion"),
         Line::from("?: help panel"),
