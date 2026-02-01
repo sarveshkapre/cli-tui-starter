@@ -18,3 +18,12 @@ fn prints_keys() {
         .success()
         .stdout(contains("Key bindings"));
 }
+
+#[test]
+fn demo_requires_tty() {
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.arg("demo")
+        .assert()
+        .failure()
+        .stderr(contains("requires a real terminal (TTY)"));
+}

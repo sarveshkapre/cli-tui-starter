@@ -11,6 +11,7 @@ use cli::{Cli, Commands};
 use crossterm::event::{self, Event};
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
+use std::io::IsTerminal;
 use std::time::{Duration, Instant};
 
 fn main() -> Result<()> {
@@ -30,6 +31,13 @@ fn main() -> Result<()> {
 }
 
 fn run_demo(args: cli::DemoArgs) -> Result<()> {
+    if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
+        anyhow::bail!(
+            "`demo` is an interactive TUI and requires a real terminal (TTY). Try running it \
+             directly in a terminal, or use `cli-tui-starter themes` / `cli-tui-starter keys`."
+        );
+    }
+
     let mut guard = terminal::TerminalGuard::enter()?;
     let backend = CrosstermBackend::new(guard.stdout());
     let mut terminal = Terminal::new(backend)?;
