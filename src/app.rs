@@ -1,6 +1,8 @@
 use crate::cli::DemoArgs;
 use crate::theme::{themes, Theme};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use std::env;
+use std::ffi::OsStr;
 
 pub struct App {
     themes: Vec<Theme>,
@@ -24,7 +26,7 @@ impl App {
         Self {
             themes: list,
             theme_index,
-            no_color: args.no_color,
+            no_color: args.no_color || env_disables_color_current(),
             high_contrast: args.high_contrast,
             reduced_motion: args.reduced_motion,
             show_help: false,
@@ -112,5 +114,66 @@ impl App {
             }
             _ => {}
         }
+    }
+}
+
+fn env_disables_color_current() -> bool {
+    env_disables_color(
+        env::var_os("NO_COLOR").as_deref(),
+        env::var_os("CLICOLOR").as_deref(),
+        env::var_os("TERM").as_deref(),
+    )
+}
+
+fn env_disables_color(
+    no_color: Option<&OsStr>,
+    clicolor: Option<&OsStr>,
+    term: Option<&OsStr>,
+) -> bool {
+    if no_color.is_some() {
+        return true;
+    }
+
+    if matches!(term.and_then(|t| t.to_str()), Some("dumb")) {
+        return true;
+    }
+
+    matches!(clicolor.and_then(|c| c.to_str()), Some("0"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn env_disables_color_honors_no_color_presence() {
+        assert!(env_disables_color(
+            Some(OsStr::new("")),
+            Some(OsStr::new("1")),
+            Some(OsStr::new("xterm-256color"))
+        ));
+    }
+
+    #[test]
+    fn env_disables_color_honors_clicolor_zero() {
+        assert!(env_disables_color(
+            None,
+            Some(OsStr::new("0")),
+            Some(OsStr::new("xterm-256color"))
+        ));
+    }
+
+    #[test]
+    fn env_disables_color_honors_term_dumb() {
+        assert!(env_disables_color(None, None, Some(OsStr::new("dumb"))));
+    }
+
+    #[test]
+    fn env_disables_color_defaults_to_false() {
+        assert!(!env_disables_color(
+            None,
+            Some(OsStr::new("1")),
+            Some(OsStr::new("xterm-256color"))
+        ));
     }
 }

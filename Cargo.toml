@@ -1,6 +1,6 @@
 [package]
 name = "cli-tui-starter"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT"
 description = "Beautiful minimal TUI template with commands, themes, and accessibility."
@@ -9,8 +9,8 @@ repository = "https://github.com/sarveshkapre/cli-tui-starter"
 [dependencies]
 anyhow = "1.0.82"
 clap = { version = "4.5.20", features = ["derive"] }
-crossterm = "0.27.0"
-ratatui = "0.26.3"
+crossterm = "0.29.0"
+ratatui = "0.30.0"
 unicode-width = "0.1.11"
 
 [dev-dependencies]

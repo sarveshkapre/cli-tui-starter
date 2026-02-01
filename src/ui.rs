@@ -6,7 +6,7 @@ use ratatui::widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap};
 use ratatui::Frame;
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    let area = frame.size();
+    let area = frame.area();
     let theme = app.current_theme();
 
     let layout = Layout::default()

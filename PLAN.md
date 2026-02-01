@@ -24,13 +24,14 @@ make check
 ```
 
 ## Shipped (most recent)
+- 2026-02-01: v0.1.2 dependency refresh + env-based no-color (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.1 responsive layout + adaptive help (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.0 initial scaffold
 
 ## Next
-- Address `cargo audit` warnings by bumping `ratatui` (and dependencies) to a warning-free set
 - Add config file support for defaults (theme/toggles)
 - Expand smoke tests (CLI help/version, invalid args)
+ - Add mouse support behind an explicit toggle
 *** Add File: UPDATE.md
 # UPDATE
 
