@@ -3,7 +3,7 @@
 ## Release checklist
 - [ ] `make check` passes locally
 - [ ] CI is green on main
-- [ ] `docs/CHANGELOG.md` updated
+- [ ] `CHANGELOG.md` updated
 - [ ] Tag version `vX.Y.Z`
 - [ ] Publish GitHub release
 

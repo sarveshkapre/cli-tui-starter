@@ -48,12 +48,16 @@ impl App {
     }
 
     pub fn spinner_frame(&self) -> &str {
-        const FRAMES: [&str; 4] = ["-", "\\", "|", "/"];
-        FRAMES[self.spinner_index % FRAMES.len()]
+        if self.no_color || self.reduced_motion {
+            "•"
+        } else {
+            const FRAMES: [&str; 4] = ["-", "\\", "|", "/"];
+            FRAMES[self.spinner_index % FRAMES.len()]
+        }
     }
 
     pub fn tick(&mut self) {
-        if !self.reduced_motion {
+        if !self.no_color && !self.reduced_motion {
             self.spinner_index = self.spinner_index.wrapping_add(1);
         }
     }

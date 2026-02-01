@@ -17,7 +17,7 @@ make dev
 - Release build: `make release`
 
 ## Release flow
-1. Update `docs/CHANGELOG.md`.
+1. Update `CHANGELOG.md`.
 2. Tag a version `vX.Y.Z`.
 3. Publish GitHub release with notes from `docs/RELEASE.md`.
 

@@ -1,4 +1,3 @@
 # CHANGELOG
 
-## 0.1.0 - 2026-02-01
-- Initial scaffold with CLI commands, themes, and accessibility toggles.
+This project keeps its changelog at `../CHANGELOG.md` (repo root).
