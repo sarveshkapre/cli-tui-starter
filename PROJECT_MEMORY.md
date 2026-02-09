@@ -120,7 +120,7 @@
 - Evidence:
   - Files: `Cargo.toml`, `Cargo.lock`, `CHANGELOG.md`
   - Verification: `make check`
-- Commit: (pending)
+- Commit: `fa22bff07f5c0e0880db615397105c8a73bbbb37`
 - Confidence: High
 - Trust label: Verified by local tests
 
