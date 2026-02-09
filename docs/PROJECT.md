@@ -20,6 +20,7 @@ make dev
 - Default path: `$XDG_CONFIG_HOME/cli-tui-starter/config.toml` or `~/.config/cli-tui-starter/config.toml`
 - Override path: `cli-tui-starter demo --config /path/to/config.toml`
 - Static preview (no TTY required): `cli-tui-starter demo --no-tty` (optionally `--width N --height N`)
+- ASCII-only preview (for logs/limited terminals): `cli-tui-starter demo --no-tty --ascii`
 - Keys preview (same config): `cli-tui-starter keys --config /path/to/config.toml`
 - Generate a starter config: `cli-tui-starter config init` (use `--stdout` to print)
 - Validate config: `cli-tui-starter config validate` (use `--format json` for scripting)

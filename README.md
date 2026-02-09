@@ -49,6 +49,7 @@ cli-tui-starter demo --theme aurora
 cli-tui-starter demo --theme mono --high-contrast
 cli-tui-starter demo --config ~/.config/cli-tui-starter/config.toml --color --motion
 cli-tui-starter demo --no-tty
+cli-tui-starter demo --no-tty --ascii
 cli-tui-starter demo --no-tty --width 100 --height 28
 cli-tui-starter themes
 cli-tui-starter keys
@@ -82,6 +83,7 @@ theme = "aurora"         # aurora | mono | solar
 no_color = false
 high_contrast = false
 reduced_motion = false
+ascii = false            # ASCII-only glyphs for `demo --no-tty`
 
 [keys]
 cycle_theme = "t"

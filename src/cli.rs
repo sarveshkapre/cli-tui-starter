@@ -38,6 +38,9 @@ pub struct DemoArgs {
     /// Height for `--no-tty` preview rendering (rows).
     #[arg(long, requires = "no_tty")]
     pub height: Option<u16>,
+    /// Use ASCII glyphs for `--no-tty` output (avoids box-drawing characters).
+    #[arg(long, requires = "no_tty", action = ArgAction::SetTrue, default_value_t = false)]
+    pub ascii: bool,
     /// Disable color output for maximum compatibility.
     #[arg(
         long,

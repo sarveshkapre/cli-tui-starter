@@ -432,7 +432,12 @@ fn centered_popup_rect(area: Rect) -> Rect {
     }
 }
 
-pub fn render_static_preview(app: &App, width: u16, height: u16) -> anyhow::Result<String> {
+pub fn render_static_preview(
+    app: &App,
+    width: u16,
+    height: u16,
+    ascii: bool,
+) -> anyhow::Result<String> {
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
 
@@ -443,10 +448,37 @@ pub fn render_static_preview(app: &App, width: u16, height: u16) -> anyhow::Resu
     let buffer = terminal.backend().buffer();
     let mut lines = Vec::<String>::with_capacity(height as usize);
 
+    fn ascii_symbol(sym: &str) -> &str {
+        // Keep this small and conservative: only map the glyphs we render today.
+        // Unknown non-ASCII symbols become '?' to keep output machine-safe.
+        match sym {
+            // Box drawing
+            "┌" | "┐" | "└" | "┘" | "├" | "┤" | "┬" | "┴" | "┼" => "+",
+            "─" => "-",
+            "│" => "|",
+
+            // Common blocks/shades (e.g. gauge fill)
+            "█" | "▓" | "▒" | "░" | "▉" | "▊" | "▋" | "▌" | "▍" | "▎" | "▏" => {
+                "#"
+            }
+
+            // Bullet used in reduced-motion/no-color spinner.
+            "•" => "*",
+
+            _ if sym.is_ascii() => sym,
+            _ => "?",
+        }
+    }
+
     for y in 0..height {
         let mut line = String::new();
         for x in 0..width {
-            line.push_str(buffer[(x, y)].symbol());
+            let sym = buffer[(x, y)].symbol();
+            if ascii {
+                line.push_str(ascii_symbol(sym));
+            } else {
+                line.push_str(sym);
+            }
         }
         lines.push(line.trim_end_matches(' ').to_string());
     }

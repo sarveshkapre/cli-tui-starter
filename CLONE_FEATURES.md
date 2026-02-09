@@ -10,12 +10,15 @@
 ### Backlog
 - [ ] P2: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
 - [ ] P2: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
-- [ ] P2: Add an ASCII-only render mode for `demo --no-tty` for terminals/logs that dislike box-drawing glyphs.
 - [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
 - [ ] P3: Add a `demo --record` mode that writes key events + terminal size to a file for reproducible UI debugging.
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-09: Added `cli-tui-starter demo --no-tty --ascii` for an ASCII-only static preview (better for logs/limited terminals) and snapshot coverage.
+  Evidence: `src/cli.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/demo_no_tty_ascii_snapshots.rs`, `tests/snapshots/demo_*_ascii.txt`, `README.md`, `docs/PROJECT.md`; command `make check`.
+- [x] 2026-02-09: Stabilized snapshot fixtures on Windows by enforcing LF checkout via `.gitattributes`.
+  Evidence: `.gitattributes`; command `git check-attr eol -- tests/snapshots/demo_80x24.txt` (and Windows CI).
 - [x] 2026-02-09: Expanded `demo` with a compact "Showcase" panel (gauge + table) and clarified header status labels to match config semantics.
   Evidence: `src/ui.rs`, `README.md`, `docs/ROADMAP.md`; commands `cargo test`, `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion`.
 - [x] 2026-02-09: Added golden snapshot tests for `demo --no-tty` output at fixed sizes (60x18, 80x24, 120x24).
@@ -55,7 +58,7 @@
 
 ## Insights
 - Gap map (trusted, local):
-  - Missing: opt-in mouse support; ASCII-only `demo --no-tty` render mode.
+  - Missing: opt-in mouse support.
   - Weak: demo breadth (needs tabs/forms/scrolling list examples).
   - Parity: help overlay + configurable key bindings (now present).
   - Differentiator: CI-friendly `demo --no-tty` plus golden UI snapshots.

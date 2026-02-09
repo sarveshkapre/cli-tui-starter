@@ -13,6 +13,7 @@ pub struct DemoSettings {
     pub no_color: bool,
     pub high_contrast: bool,
     pub reduced_motion: bool,
+    pub ascii: bool,
 }
 
 pub struct DemoRuntime {
@@ -49,6 +50,7 @@ struct DemoDefaultsRaw {
     no_color: Option<bool>,
     high_contrast: Option<bool>,
     reduced_motion: Option<bool>,
+    ascii: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -84,6 +86,7 @@ struct DemoDefaults {
     no_color: Option<bool>,
     high_contrast: Option<bool>,
     reduced_motion: Option<bool>,
+    ascii: Option<bool>,
 }
 
 #[derive(Debug, Clone)]
@@ -138,6 +141,7 @@ fn parse_config_bundle(contents: &str, source: &Path) -> Result<LoadedConfigBund
         no_color: raw.demo.no_color,
         high_contrast: raw.demo.high_contrast,
         reduced_motion: raw.demo.reduced_motion,
+        ascii: raw.demo.ascii,
     };
 
     let keys = apply_keys_overrides(KeyBindings::default(), raw.keys, source)?;
@@ -231,11 +235,20 @@ fn resolve_with_sources(
         defaults.reduced_motion.unwrap_or(false)
     };
 
+    // Only affects `demo --no-tty` rendering; keeping it in the config makes CI/docs output
+    // deterministic without needing extra CLI flags.
+    let ascii = if args.ascii {
+        true
+    } else {
+        defaults.ascii.unwrap_or(false)
+    };
+
     DemoSettings {
         theme,
         no_color,
         high_contrast,
         reduced_motion,
+        ascii,
     }
 }
 
@@ -270,6 +283,8 @@ theme = "aurora"
 no_color = false
 high_contrast = false
 reduced_motion = false
+# Use ASCII glyphs for `demo --no-tty` output (avoids box-drawing characters).
+ascii = false
 
 [keys]
 cycle_theme = "t"
@@ -320,6 +335,7 @@ mod tests {
             no_tty: false,
             width: None,
             height: None,
+            ascii: false,
             no_color: false,
             color: false,
             high_contrast: false,
@@ -340,6 +356,7 @@ mod tests {
             no_color = true
             high_contrast = false
             reduced_motion = true
+            ascii = true
             "#,
             path,
         )
@@ -349,6 +366,7 @@ mod tests {
         assert_eq!(parsed.demo.no_color, Some(true));
         assert_eq!(parsed.demo.high_contrast, Some(false));
         assert_eq!(parsed.demo.reduced_motion, Some(true));
+        assert_eq!(parsed.demo.ascii, Some(true));
     }
 
     #[test]
@@ -434,6 +452,7 @@ mod tests {
             no_color: Some(true),
             high_contrast: Some(true),
             reduced_motion: Some(true),
+            ascii: Some(false),
         };
 
         let resolved = resolve_with_sources(&args, &defaults, true);
@@ -444,6 +463,7 @@ mod tests {
                 no_color: false,
                 high_contrast: false,
                 reduced_motion: false,
+                ascii: false,
             }
         );
     }
@@ -456,6 +476,7 @@ mod tests {
             no_color: Some(false),
             high_contrast: Some(true),
             reduced_motion: Some(true),
+            ascii: Some(false),
         };
 
         let resolved = resolve_with_sources(&args, &defaults, true);

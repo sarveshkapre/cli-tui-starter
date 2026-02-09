@@ -42,7 +42,10 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
             resolved.settings.reduced_motion,
             resolved.keys,
         );
-        print!("{}", ui::render_static_preview(&app, width, height)?);
+        print!(
+            "{}",
+            ui::render_static_preview(&app, width, height, resolved.settings.ascii)?
+        );
         return Ok(());
     }
 
