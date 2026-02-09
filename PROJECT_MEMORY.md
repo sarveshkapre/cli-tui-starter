@@ -1,5 +1,27 @@
 # PROJECT_MEMORY
 
+## 2026-02-09 - Demo "Showcase" panel + clearer status labels
+- Decision: Expand the demo body with a compact "Showcase" panel that demonstrates common widget patterns (gauge + table), and clarify header status labels to match config semantics (`No color`, `Reduced motion`).
+- Why: A starter's demo is the product; showing real widget primitives plus clear state labels improves onboarding, expectations, and regressions visibility.
+- Evidence:
+  - Files: `src/ui.rs`, `README.md`, `docs/ROADMAP.md`
+  - Commands: `cargo test`, `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion`
+- Commit: `9f2a09a19f65cbedd9c316bc4b089d382c5bacd1`
+- Confidence: High
+- Trust label: Trusted (local code/tests)
+- Follow-ups:
+  - If the demo grows further, consider a dedicated "widgets gallery" view with tabs and scrolling.
+
+## 2026-02-09 - Golden snapshots for `demo --no-tty`
+- Decision: Add golden snapshot tests for `demo --no-tty` at fixed sizes (60x18, 80x24, 120x24).
+- Why: Catch UI regressions without requiring an interactive terminal; verify both narrow and wide layouts cross-platform.
+- Evidence:
+  - Files: `tests/demo_no_tty_snapshots.rs`, `tests/snapshots/demo_*.txt`
+  - Commands: `cargo test`
+- Commit: `5a184f5169dfbeacd1b95303e98ba76f30fe9e18`
+- Confidence: High
+- Trust label: Trusted (local code/tests)
+
 ## 2026-02-09 - Non-interactive `demo --no-tty` static preview rendering
 - Decision: Add `cli-tui-starter demo --no-tty` to render a one-frame static preview to stdout (default 80x24) with `--width/--height` overrides.
 - Why: Enables CI/docs-friendly verification and makes it possible to demonstrate the UI without an interactive TTY (avoids hangs and improves onboarding).
@@ -193,6 +215,10 @@
 - `cargo run -- keys --format json` (pass)
 - `gh run watch 21821839896 --exit-status` (pass)
 - `cargo run -- --version` (pass; prints `0.1.5`)
+- `cargo run -- --version` (pass; prints `0.1.6`)
+- `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
+- `make check` (pass)
+- `gh run list --limit 10 --branch main` (fail; HTTP 429 throttled)
 
 ## 2026-02-09 - Mistakes and fixes
 - Mistake: Key spec parsing for modified keys (e.g. `ctrl+c`) initially validated the full input string instead of the key segment, rejecting valid specs.

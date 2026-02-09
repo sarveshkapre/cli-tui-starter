@@ -43,4 +43,3 @@ fn demo_no_tty_snapshot_120x24() {
     let expected = include_str!("snapshots/demo_120x24.txt");
     assert_eq!(run_demo_no_tty("120", "24"), expected);
 }
-

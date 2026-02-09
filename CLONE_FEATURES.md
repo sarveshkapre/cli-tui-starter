@@ -7,12 +7,6 @@
 - Gaps found during codebase exploration
 
 ## Candidate Features To Do
-### Cycle 4 (selected)
-- [ ] P1: Expand the `demo` screen to showcase a small set of common widgets/layout patterns (table + gauge) while keeping the code minimal.
-- [ ] P1: Add snapshot tests for `demo --no-tty` output at a few fixed sizes to catch UI regressions without a real terminal.
-- [ ] P1: Fix minor UX drift: make header status labels match config semantics (`No color`, `Reduced motion`) and keep README aligned.
-- [ ] P1: Release hygiene: fix changelog drift and bump patch version for user-visible changes.
-
 ### Backlog
 - [ ] P2: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
 - [ ] P2: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
@@ -22,6 +16,12 @@
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-09: Expanded `demo` with a compact "Showcase" panel (gauge + table) and clarified header status labels to match config semantics.
+  Evidence: `src/ui.rs`, `README.md`, `docs/ROADMAP.md`; commands `cargo test`, `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion`.
+- [x] 2026-02-09: Added golden snapshot tests for `demo --no-tty` output at fixed sizes (60x18, 80x24, 120x24).
+  Evidence: `tests/demo_no_tty_snapshots.rs`, `tests/snapshots/demo_*.txt`; command `cargo test`.
+- [x] 2026-02-09: Release hygiene: fixed changelog drift and bumped crate version to `0.1.6`.
+  Evidence: `CHANGELOG.md`, `Cargo.toml`, `Cargo.lock`; commands `cargo test`, `cargo run -- --version`.
 - [x] 2026-02-09: Added `--format json` to `cli-tui-starter config validate` for machine-readable validation output.
   Evidence: `src/cli.rs`, `src/main.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`; command `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json`.
 - [x] 2026-02-09: Added minimal Windows terminal compatibility notes to docs.
@@ -59,10 +59,14 @@
 - A new advisory (`RUSTSEC-2026-0009`) affected transitive `time`; lockfile updates should be part of routine maintenance before release tagging.
 - Market expectations (untrusted, external):
   - Most mature TUIs provide a discoverable in-app help overlay and user-customizable keybindings (often via config).
+  - The Ratatui ecosystem explicitly encourages snapshot-style testing using `TestBackend` to catch UI regressions.
+  - Several popular TUI stacks (e.g. Charm's Bubble Tea) include a compact, auto-generated help view derived from key bindings.
     Sources:
     - https://ratatui.rs
     - https://github.com/ratatui/templates
     - https://github.com/ohmyroot/ratatui-template
+    - https://ratatui.rs/recipes/testing/snapshots/
+    - https://github.com/charmbracelet/bubbles
     - https://textual.textualize.io/guide/input/#bindings
     - https://github.com/vadimdemedes/ink
 - Product insight:

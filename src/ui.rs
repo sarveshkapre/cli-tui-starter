@@ -167,8 +167,8 @@ fn draw_showcase_contents(
     }
 
     let theme_info = Paragraph::new(Text::from(theme_info_lines))
-    .wrap(Wrap { trim: true })
-    .style(base);
+        .wrap(Wrap { trim: true })
+        .style(base);
 
     let gauge = Gauge::default()
         .ratio(progress_ratio)
@@ -184,16 +184,22 @@ fn draw_showcase_contents(
             Cell::from("help"),
             Cell::from(keys::key_list_display(&app.keymap.toggle_help)),
         ]),
-        Row::new(vec![Cell::from("quit"), Cell::from(app.keymap.quit_label())]),
+        Row::new(vec![
+            Cell::from("quit"),
+            Cell::from(app.keymap.quit_label()),
+        ]),
     ];
 
-    let table = Table::new(rows, [Constraint::Percentage(55), Constraint::Percentage(45)])
-        .header(
-            Row::new(vec![Cell::from("Action"), Cell::from("Key")])
-                .style(base.fg(theme.palette.muted).add_modifier(Modifier::BOLD)),
-        )
-        .column_spacing(1)
-        .style(base);
+    let table = Table::new(
+        rows,
+        [Constraint::Percentage(55), Constraint::Percentage(45)],
+    )
+    .header(
+        Row::new(vec![Cell::from("Action"), Cell::from("Key")])
+            .style(base.fg(theme.palette.muted).add_modifier(Modifier::BOLD)),
+    )
+    .column_spacing(1)
+    .style(base);
 
     frame.render_widget(theme_info, layout[0]);
     frame.render_widget(gauge, layout[1]);

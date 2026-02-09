@@ -1,12 +1,18 @@
 # CHANGELOG
 
 ## Unreleased
-- Add `cli-tui-starter demo --no-tty` to print a static preview without requiring a TTY (useful for CI/docs).
-- Add `--format json` to `cli-tui-starter config validate` for scripting/CI use.
+- (none)
+
+## 0.1.6 - 2026-02-09
+- Expand the demo with a compact "Showcase" panel that demonstrates common widget patterns (gauge + table) while staying minimal.
+- Clarify demo header status labels to match config semantics (`No color`, `Reduced motion`).
+- Add golden snapshot tests for `demo --no-tty` output at fixed sizes (60x18, 80x24, 120x24).
 
 ## 0.1.5 - 2026-02-09
+- Add `cli-tui-starter demo --no-tty` to print a static preview without requiring a TTY (useful for CI/docs).
 - Add `cli-tui-starter config init` to generate a commented starter config at the default path.
 - Add `cli-tui-starter config validate` to validate a config file without launching the TUI.
+- Add `--format json` to `cli-tui-starter config validate` for scripting/CI use.
 - Add `--format json` to `themes` and `keys` for scripting use.
 - Always advertise `ctrl+c` as an emergency quit key in `keys` output and the in-app help.
 - Add a Windows CI job that runs `cargo test` on `windows-latest`.
