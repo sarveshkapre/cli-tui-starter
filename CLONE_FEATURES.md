@@ -7,13 +7,17 @@
 - Gaps found during codebase exploration
 
 ## Candidate Features To Do
-- [ ] P2: Add a `--no-tty` non-interactive demo mode that prints a static preview (for CI/docs) instead of erroring.
 - [ ] P2: Improve Windows terminal compatibility notes (ConPTY quirks, recommended terminal apps).
+- [ ] P2: Add JSON output for `config validate` (machine-readable validation status + resolved config path).
 - [ ] P3: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
 - [ ] P3: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
 - [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
+- [ ] P3: Add a `demo --record` mode that writes key events + terminal size to a file for reproducible UI debugging.
+- [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-09: Added `cli-tui-starter demo --no-tty` to render a one-frame static preview to stdout (default 80x24) for CI/docs, with `--width/--height` overrides.
+  Evidence: `src/cli.rs`, `src/main.rs`, `src/ui.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`, `docs/ROADMAP.md`, `CHANGELOG.md`; command `cargo run -- demo --no-tty --width 80 --height 24`.
 - [x] 2026-02-09: Added `cli-tui-starter config init` and `cli-tui-starter config validate` for starter config generation and validation.
   Evidence: `src/cli.rs`, `src/main.rs`, `src/config.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`; command `make check`.
 - [x] 2026-02-09: Added `--format json` output to `themes` and `keys` for scripting use.

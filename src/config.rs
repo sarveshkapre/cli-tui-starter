@@ -317,6 +317,9 @@ mod tests {
     fn default_args() -> DemoArgs {
         DemoArgs {
             theme: None,
+            no_tty: false,
+            width: None,
+            height: None,
             no_color: false,
             color: false,
             high_contrast: false,

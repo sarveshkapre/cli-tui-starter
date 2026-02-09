@@ -52,6 +52,17 @@ fn demo_requires_tty() {
 }
 
 #[test]
+fn demo_no_tty_renders_static_preview() {
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["demo", "--no-tty", "--width", "80", "--height", "24"])
+        .assert()
+        .success()
+        .stdout(contains("CLI TUI Starter"))
+        .stdout(contains("Commands"))
+        .stdout(contains("Accessibility"));
+}
+
+#[test]
 fn prints_help() {
     let mut cmd = cargo_bin_cmd!("cli-tui-starter");
     cmd.arg("--help").assert().success().stdout(contains(
@@ -83,6 +94,9 @@ fn demo_help_includes_config_and_override_flags() {
     cmd.args(["demo", "--help"])
         .assert()
         .success()
+        .stdout(contains("--no-tty"))
+        .stdout(contains("--width"))
+        .stdout(contains("--height"))
         .stdout(contains("--config"))
         .stdout(contains("--color"))
         .stdout(contains("--motion"))

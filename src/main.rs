@@ -31,10 +31,26 @@ fn main() -> Result<()> {
 fn run_demo(args: cli::DemoArgs) -> Result<()> {
     let resolved = config::resolve_demo_runtime(&args)?;
 
+    if args.no_tty {
+        let width = args.width.unwrap_or(80).clamp(20, 240);
+        let height = args.height.unwrap_or(24).clamp(10, 120);
+
+        let app = App::new(
+            resolved.settings.theme,
+            resolved.settings.no_color,
+            resolved.settings.high_contrast,
+            resolved.settings.reduced_motion,
+            resolved.keys,
+        );
+        print!("{}", ui::render_static_preview(&app, width, height)?);
+        return Ok(());
+    }
+
     if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
         anyhow::bail!(
             "`demo` is an interactive TUI and requires a real terminal (TTY). Try running it \
-             directly in a terminal, or use `cli-tui-starter themes` / `cli-tui-starter keys`."
+             directly in a terminal, use `cli-tui-starter demo --no-tty` for a static preview, \
+             or run `cli-tui-starter themes` / `cli-tui-starter keys`."
         );
     }
 

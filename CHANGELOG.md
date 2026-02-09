@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Unreleased
+- Add `cli-tui-starter demo --no-tty` to print a static preview without requiring a TTY (useful for CI/docs).
+
 ## 0.1.5 - 2026-02-09
 - Add `cli-tui-starter config init` to generate a commented starter config at the default path.
 - Add `cli-tui-starter config validate` to validate a config file without launching the TUI.

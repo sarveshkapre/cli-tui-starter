@@ -29,6 +29,15 @@ pub struct DemoArgs {
     /// Theme to use (by name).
     #[arg(long, value_enum)]
     pub theme: Option<ThemeName>,
+    /// Render a one-frame static preview to stdout and exit (does not require a TTY).
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub no_tty: bool,
+    /// Width for `--no-tty` preview rendering (columns).
+    #[arg(long, requires = "no_tty")]
+    pub width: Option<u16>,
+    /// Height for `--no-tty` preview rendering (rows).
+    #[arg(long, requires = "no_tty")]
+    pub height: Option<u16>,
     /// Disable color output for maximum compatibility.
     #[arg(
         long,

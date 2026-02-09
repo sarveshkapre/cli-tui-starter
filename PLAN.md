@@ -33,6 +33,5 @@ make check
 - 2026-02-01: v0.1.0 initial scaffold
 
 ## Next
-- Add `demo --no-tty` static preview output for CI/docs.
 - Add mouse support behind an explicit toggle.
 - Add automated snapshot tests for narrow and wide terminal layouts.

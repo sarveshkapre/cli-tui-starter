@@ -319,6 +319,32 @@ fn centered_popup_rect(area: Rect) -> Rect {
     }
 }
 
+pub fn render_static_preview(app: &App, width: u16, height: u16) -> anyhow::Result<String> {
+    use ratatui::backend::TestBackend;
+    use ratatui::Terminal;
+
+    let backend = TestBackend::new(width, height);
+    let mut terminal = Terminal::new(backend)?;
+    terminal.draw(|frame| draw(frame, app))?;
+
+    let buffer = terminal.backend().buffer();
+    let mut lines = Vec::<String>::with_capacity(height as usize);
+
+    for y in 0..height {
+        let mut line = String::new();
+        for x in 0..width {
+            line.push_str(buffer[(x, y)].symbol());
+        }
+        lines.push(line.trim_end_matches(' ').to_string());
+    }
+
+    while lines.last().is_some_and(|l| l.is_empty()) {
+        lines.pop();
+    }
+
+    Ok(lines.join("\n") + "\n")
+}
+
 #[cfg(test)]
 mod tests {
     use crate::app::App;
