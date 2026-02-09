@@ -7,6 +7,8 @@
 - Gaps found during codebase exploration
 
 ## Candidate Features To Do
+- [ ] P2: Expand the `demo` screen to showcase a small set of common widgets/layout patterns (tabs, tables, forms, progress) while keeping the code minimal.
+- [ ] P2: Add snapshot tests for `demo --no-tty` output at a few fixed sizes to catch UI regressions without a real terminal.
 - [ ] P3: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
 - [ ] P3: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
 - [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
