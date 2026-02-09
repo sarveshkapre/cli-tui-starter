@@ -54,6 +54,11 @@
   Evidence: `Cargo.lock`; command `cargo update -p time --precise 0.3.47`; `make check` passed.
 
 ## Insights
+- Gap map (trusted, local):
+  - Missing: opt-in mouse support; ASCII-only `demo --no-tty` render mode.
+  - Weak: demo breadth (needs tabs/forms/scrolling list examples).
+  - Parity: help overlay + configurable key bindings (now present).
+  - Differentiator: CI-friendly `demo --no-tty` plus golden UI snapshots.
 - CI failure pattern from runs `21557276579`, `21557279815`, and `21557375125` is a flaky gitleaks push-range scan on shallow checkout (`fetch-depth: 1`).
 - No open GitHub issues from `sarveshkapre` or trusted bot accounts as of 2026-02-09.
 - A new advisory (`RUSTSEC-2026-0009`) affected transitive `time`; lockfile updates should be part of routine maintenance before release tagging.
