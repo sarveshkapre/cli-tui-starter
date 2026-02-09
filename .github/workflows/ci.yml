@@ -20,6 +20,17 @@ jobs:
       - name: Quality gate
         run: make check
 
+  windows-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+      - name: Tests
+        run: cargo test
+
   gitleaks:
     runs-on: ubuntu-latest
     steps:
