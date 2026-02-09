@@ -19,6 +19,7 @@
 - `src/main.rs` - CLI entry point and command routing
 - `src/app.rs` - app state and key handling
 - `src/config.rs` - config file loading and CLI/config/env precedence resolution
+- `src/keys.rs` - keymap parsing, validation, and display labels
 - `src/ui.rs` - layout and rendering
 - `src/theme.rs` - themes and accessibility palettes
 - `src/terminal.rs` - terminal lifecycle guard

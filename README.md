@@ -16,7 +16,7 @@ Commands
 - Commands: `demo`, `themes`, `keys`
 - Themes with accessible high-contrast and no-color modes
 - Reduced-motion toggle
-- Config file defaults for `demo` options
+- Config file defaults for `demo` options and key bindings
 - Minimal, readable architecture
 
 ## Quickstart
@@ -32,6 +32,7 @@ cli-tui-starter demo --theme mono --high-contrast
 cli-tui-starter demo --config ~/.config/cli-tui-starter/config.toml --color --motion
 cli-tui-starter themes
 cli-tui-starter keys
+cli-tui-starter keys --config ~/.config/cli-tui-starter/config.toml
 ```
 
 ## Config file
@@ -46,6 +47,14 @@ theme = "aurora"         # aurora | mono | solar
 no_color = false
 high_contrast = false
 reduced_motion = false
+
+[keys]
+cycle_theme = "t"
+toggle_high_contrast = "h"
+toggle_color = "c"
+toggle_reduced_motion = "r"
+toggle_help = "?"
+quit = ["q", "esc"]      # esc always quits even if not listed
 ```
 
 Precedence:

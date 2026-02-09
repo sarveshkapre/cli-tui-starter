@@ -1,10 +1,12 @@
 use crate::cli::ThemeName;
+use crate::keys::KeyBindings;
 use crate::theme::{themes, Theme};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub struct App {
     themes: Vec<Theme>,
     theme_index: usize,
+    pub keymap: KeyBindings,
     pub no_color: bool,
     pub high_contrast: bool,
     pub reduced_motion: bool,
@@ -19,6 +21,7 @@ impl App {
         no_color: bool,
         high_contrast: bool,
         reduced_motion: bool,
+        keymap: KeyBindings,
     ) -> Self {
         let list = themes();
         let theme_index = list
@@ -29,6 +32,7 @@ impl App {
         Self {
             themes: list,
             theme_index,
+            keymap,
             no_color,
             high_contrast,
             reduced_motion,
@@ -68,54 +72,32 @@ impl App {
     }
 
     pub fn handle_key(&mut self, key: KeyEvent) {
-        match key {
-            KeyEvent {
-                code: KeyCode::Char('q'),
-                ..
-            }
-            | KeyEvent {
-                code: KeyCode::Esc, ..
-            } => {
-                self.should_quit = true;
-            }
-            KeyEvent {
-                code: KeyCode::Char('c'),
-                modifiers: KeyModifiers::CONTROL,
-                ..
-            } => {
-                self.should_quit = true;
-            }
-            KeyEvent {
-                code: KeyCode::Char('t'),
-                ..
-            } => {
-                self.theme_index = (self.theme_index + 1) % self.themes.len();
-            }
-            KeyEvent {
-                code: KeyCode::Char('h'),
-                ..
-            } => {
-                self.high_contrast = !self.high_contrast;
-            }
-            KeyEvent {
-                code: KeyCode::Char('c'),
-                ..
-            } => {
-                self.no_color = !self.no_color;
-            }
-            KeyEvent {
-                code: KeyCode::Char('r'),
-                ..
-            } => {
-                self.reduced_motion = !self.reduced_motion;
-            }
-            KeyEvent {
-                code: KeyCode::Char('?'),
-                ..
-            } => {
-                self.show_help = !self.show_help;
-            }
-            _ => {}
+        if key.code == KeyCode::Esc
+            || (key.code == KeyCode::Char('c') && key.modifiers == KeyModifiers::CONTROL)
+            || KeyBindings::matches_any(&self.keymap.quit, key)
+        {
+            self.should_quit = true;
+            return;
+        }
+
+        if KeyBindings::matches_any(&self.keymap.cycle_theme, key) {
+            self.theme_index = (self.theme_index + 1) % self.themes.len();
+            return;
+        }
+        if KeyBindings::matches_any(&self.keymap.toggle_high_contrast, key) {
+            self.high_contrast = !self.high_contrast;
+            return;
+        }
+        if KeyBindings::matches_any(&self.keymap.toggle_color, key) {
+            self.no_color = !self.no_color;
+            return;
+        }
+        if KeyBindings::matches_any(&self.keymap.toggle_reduced_motion, key) {
+            self.reduced_motion = !self.reduced_motion;
+            return;
+        }
+        if KeyBindings::matches_any(&self.keymap.toggle_help, key) {
+            self.show_help = !self.show_help;
         }
     }
 }

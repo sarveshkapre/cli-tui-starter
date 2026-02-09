@@ -1,4 +1,5 @@
 use crate::app::App;
+use crate::keys;
 use ratatui::layout::{Alignment, Constraint, Direction, Layout, Rect};
 use ratatui::style::{Modifier, Style};
 use ratatui::text::{Line, Span, Text};
@@ -20,10 +21,10 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     draw_header(frame, layout[0], app, &theme);
     draw_body(frame, layout[1], app, &theme);
-    draw_footer(frame, layout[2], &theme);
+    draw_footer(frame, layout[2], app, &theme);
 
     if app.show_help {
-        draw_help(frame, area, &theme);
+        draw_help(frame, area, app, &theme);
     }
 }
 
@@ -85,7 +86,10 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
             base.fg(theme.palette.muted),
         )),
         Line::from(""),
-        Line::from(Span::raw("Press t to cycle themes.")),
+        Line::from(Span::raw(format!(
+            "Press {} to cycle themes.",
+            keys::key_list_display(&app.keymap.cycle_theme)
+        ))),
     ]))
     .wrap(Wrap { trim: true })
     .block(
@@ -98,13 +102,25 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
 
     let accessibility = Paragraph::new(Text::from(vec![
         Line::from(Span::styled(
-            "h: high contrast",
+            format!(
+                "{}: high contrast",
+                keys::key_list_display(&app.keymap.toggle_high_contrast)
+            ),
             base.fg(theme.palette.accent),
         )),
-        Line::from("c: toggle color"),
-        Line::from("r: reduced motion"),
-        Line::from("?: help panel"),
-        Line::from("q/esc: quit"),
+        Line::from(format!(
+            "{}: toggle color",
+            keys::key_list_display(&app.keymap.toggle_color)
+        )),
+        Line::from(format!(
+            "{}: reduced motion",
+            keys::key_list_display(&app.keymap.toggle_reduced_motion)
+        )),
+        Line::from(format!(
+            "{}: help panel",
+            keys::key_list_display(&app.keymap.toggle_help)
+        )),
+        Line::from(format!("{}: quit", app.keymap.quit_label())),
     ]))
     .block(
         Block::default()
@@ -145,13 +161,22 @@ fn draw_body(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
     }
 }
 
-fn draw_footer(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
+fn draw_footer(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::Theme) {
     let base = Style::default().fg(theme.palette.fg).bg(theme.palette.bg);
 
     let footer = Paragraph::new(Text::from(Line::from(vec![
-        Span::styled("Press ? for help.", base.fg(theme.palette.muted)),
+        Span::styled(
+            format!(
+                "Press {} for help.",
+                keys::key_list_display(&app.keymap.toggle_help)
+            ),
+            base.fg(theme.palette.muted),
+        ),
         Span::raw(" "),
-        Span::styled("Use q or esc to exit.", base.fg(theme.palette.danger)),
+        Span::styled(
+            format!("Use {} to exit.", app.keymap.quit_label()),
+            base.fg(theme.palette.danger),
+        ),
     ])))
     .alignment(Alignment::Center)
     .block(
@@ -164,7 +189,7 @@ fn draw_footer(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
     frame.render_widget(footer, area);
 }
 
-fn draw_help(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
+fn draw_help(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::Theme) {
     let base = Style::default().fg(theme.palette.fg).bg(theme.palette.bg);
     let popup_area = centered_popup_rect(area);
 
@@ -173,12 +198,27 @@ fn draw_help(frame: &mut Frame, area: Rect, theme: &crate::theme::Theme) {
             "Keys",
             base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
         )),
-        Line::from("t: cycle theme"),
-        Line::from("h: toggle high contrast"),
-        Line::from("c: toggle color"),
-        Line::from("r: toggle reduced motion"),
-        Line::from("?: toggle help"),
-        Line::from("q/esc: quit"),
+        Line::from(format!(
+            "{}: cycle theme",
+            keys::key_list_display(&app.keymap.cycle_theme)
+        )),
+        Line::from(format!(
+            "{}: toggle high contrast",
+            keys::key_list_display(&app.keymap.toggle_high_contrast)
+        )),
+        Line::from(format!(
+            "{}: toggle color",
+            keys::key_list_display(&app.keymap.toggle_color)
+        )),
+        Line::from(format!(
+            "{}: toggle reduced motion",
+            keys::key_list_display(&app.keymap.toggle_reduced_motion)
+        )),
+        Line::from(format!(
+            "{}: toggle help",
+            keys::key_list_display(&app.keymap.toggle_help)
+        )),
+        Line::from(format!("{}: quit", app.keymap.quit_label())),
         Line::from(""),
         Line::from(Span::styled(
             "Accessibility",
@@ -276,5 +316,86 @@ fn centered_popup_rect(area: Rect) -> Rect {
         y,
         width,
         height,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::app::App;
+    use crate::cli::ThemeName;
+    use crate::keys::{parse_key_spec, KeyBindings};
+    use ratatui::backend::TestBackend;
+    use ratatui::Terminal;
+
+    fn render_lines(width: u16, height: u16, app: &App) -> Vec<String> {
+        let backend = TestBackend::new(width, height);
+        let mut terminal = Terminal::new(backend).expect("terminal");
+        terminal.draw(|f| super::draw(f, app)).expect("draw");
+
+        let buf = terminal.backend().buffer().clone();
+        (0..height)
+            .map(|y| {
+                let mut line = String::new();
+                for x in 0..width {
+                    line.push_str(buf[(x, y)].symbol());
+                }
+                line
+            })
+            .collect()
+    }
+
+    fn find_row(lines: &[String], needle: &str) -> Option<usize> {
+        lines.iter().position(|l| l.contains(needle))
+    }
+
+    #[test]
+    fn narrow_layout_stacks_sections_vertically() {
+        let app = App::new(
+            ThemeName::Aurora,
+            true,  // no_color for stable rendering
+            false, // high_contrast
+            true,  // reduced_motion
+            KeyBindings::default(),
+        );
+
+        let lines = render_lines(80, 24, &app);
+        let y_commands = find_row(&lines, " Commands ").expect("commands title");
+        let y_theme = find_row(&lines, " Theme ").expect("theme title");
+        let y_access = find_row(&lines, " Accessibility ").expect("access title");
+
+        assert!(y_commands < y_theme);
+        assert!(y_theme < y_access);
+    }
+
+    #[test]
+    fn wide_layout_places_commands_left_and_panels_right() {
+        let app = App::new(ThemeName::Aurora, true, false, true, KeyBindings::default());
+
+        let lines = render_lines(120, 24, &app);
+        let y_commands = find_row(&lines, " Commands ").expect("commands title");
+        let y_theme = find_row(&lines, " Theme ").expect("theme title");
+        let y_access = find_row(&lines, " Accessibility ").expect("access title");
+
+        assert!((y_commands as i32 - y_theme as i32).abs() <= 1);
+        assert!(y_access > y_theme);
+    }
+
+    #[test]
+    fn help_panel_uses_active_keymap_labels() {
+        let keymap = KeyBindings {
+            cycle_theme: vec![parse_key_spec("n").unwrap()],
+            toggle_help: vec![parse_key_spec("!").unwrap()],
+            ..KeyBindings::default()
+        };
+        keymap.validate().unwrap();
+
+        let mut app = App::new(ThemeName::Aurora, true, false, true, keymap);
+        app.show_help = true;
+
+        let lines = render_lines(90, 24, &app);
+        let merged = lines.join("\n");
+
+        assert!(merged.contains("n: cycle theme"));
+        assert!(merged.contains("!: toggle help"));
     }
 }

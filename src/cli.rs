@@ -19,7 +19,7 @@ pub enum Commands {
     /// List available themes.
     Themes,
     /// Print key bindings.
-    Keys,
+    Keys(KeysArgs),
 }
 
 #[derive(Args, Debug, Clone)]
@@ -61,6 +61,13 @@ pub struct DemoArgs {
     #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
     pub motion: bool,
     /// Optional path to config file (TOML).
+    #[arg(long)]
+    pub config: Option<PathBuf>,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct KeysArgs {
+    /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
     #[arg(long)]
     pub config: Option<PathBuf>,
 }

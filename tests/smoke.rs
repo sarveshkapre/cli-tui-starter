@@ -1,5 +1,8 @@
 use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::str::contains;
+use std::fs;
+use std::path::PathBuf;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
 fn prints_themes() {
@@ -64,4 +67,40 @@ fn demo_help_includes_config_and_override_flags() {
         .stdout(contains("--color"))
         .stdout(contains("--motion"))
         .stdout(contains("--normal-contrast"));
+}
+
+fn unique_temp_dir() -> PathBuf {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("clock")
+        .as_nanos();
+    std::env::temp_dir().join(format!(
+        "cli-tui-starter-test-{}-{}",
+        std::process::id(),
+        nanos
+    ))
+}
+
+#[test]
+fn keys_reflect_config_overrides_via_xdg_config_home() {
+    let root = unique_temp_dir();
+    let config_dir = root.join("cli-tui-starter");
+    fs::create_dir_all(&config_dir).expect("create config dir");
+    fs::write(
+        config_dir.join("config.toml"),
+        r#"
+        [keys]
+        cycle_theme = "n"
+        quit = "x"
+        "#,
+    )
+    .expect("write config");
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.arg("keys")
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .success()
+        .stdout(contains("- n: cycle theme"))
+        .stdout(contains("- x/esc: quit"));
 }

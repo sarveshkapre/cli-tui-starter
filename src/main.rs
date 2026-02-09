@@ -1,6 +1,7 @@
 mod app;
 mod cli;
 mod config;
+mod keys;
 mod terminal;
 mod theme;
 mod ui;
@@ -24,15 +25,12 @@ fn main() -> Result<()> {
             print_themes();
             Ok(())
         }
-        Commands::Keys => {
-            print_keys();
-            Ok(())
-        }
+        Commands::Keys(args) => print_keys(args),
     }
 }
 
 fn run_demo(args: cli::DemoArgs) -> Result<()> {
-    let settings = config::resolve_demo_settings(&args)?;
+    let resolved = config::resolve_demo_runtime(&args)?;
 
     if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
         anyhow::bail!(
@@ -46,10 +44,11 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut app = App::new(
-        settings.theme,
-        settings.no_color,
-        settings.high_contrast,
-        settings.reduced_motion,
+        resolved.settings.theme,
+        resolved.settings.no_color,
+        resolved.settings.high_contrast,
+        resolved.settings.reduced_motion,
+        resolved.keys,
     );
     let mut last_tick = Instant::now();
     let tick_rate = if app.reduced_motion {
@@ -91,14 +90,31 @@ fn print_themes() {
     print!("{}", out);
 }
 
-fn print_keys() {
+fn print_keys(args: cli::KeysArgs) -> Result<()> {
+    let keymap = config::resolve_key_bindings(args.config.as_deref())?;
     let mut out = String::new();
     out.push_str("Key bindings:\n");
-    out.push_str("- t: cycle theme\n");
-    out.push_str("- h: toggle high contrast\n");
-    out.push_str("- c: toggle color\n");
-    out.push_str("- r: toggle reduced motion\n");
-    out.push_str("- ?: toggle help\n");
-    out.push_str("- q/esc: quit\n");
+    out.push_str(&format!(
+        "- {}: cycle theme\n",
+        keys::key_list_display(&keymap.cycle_theme)
+    ));
+    out.push_str(&format!(
+        "- {}: toggle high contrast\n",
+        keys::key_list_display(&keymap.toggle_high_contrast)
+    ));
+    out.push_str(&format!(
+        "- {}: toggle color\n",
+        keys::key_list_display(&keymap.toggle_color)
+    ));
+    out.push_str(&format!(
+        "- {}: toggle reduced motion\n",
+        keys::key_list_display(&keymap.toggle_reduced_motion)
+    ));
+    out.push_str(&format!(
+        "- {}: toggle help\n",
+        keys::key_list_display(&keymap.toggle_help)
+    ));
+    out.push_str(&format!("- {}: quit\n", keymap.quit_label()));
     print!("{}", out);
+    Ok(())
 }

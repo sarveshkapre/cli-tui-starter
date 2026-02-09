@@ -19,10 +19,22 @@ make dev
 ## Demo config
 - Default path: `$XDG_CONFIG_HOME/cli-tui-starter/config.toml` or `~/.config/cli-tui-starter/config.toml`
 - Override path: `cli-tui-starter demo --config /path/to/config.toml`
+- Keys preview (same config): `cli-tui-starter keys --config /path/to/config.toml`
 - CLI override flags:
   - color: `--no-color` / `--color`
   - contrast: `--high-contrast` / `--normal-contrast`
   - motion: `--reduced-motion` / `--motion`
+
+## Key bindings config
+```toml
+[keys]
+cycle_theme = "t"
+toggle_high_contrast = "h"
+toggle_color = "c"
+toggle_reduced_motion = "r"
+toggle_help = "?"
+quit = ["q", "esc"]
+```
 
 ## Release flow
 1. Update `CHANGELOG.md`.
