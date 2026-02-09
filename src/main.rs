@@ -13,6 +13,7 @@ use cli::{Cli, Commands};
 use crossterm::event::{self, Event};
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
+use serde::Serialize;
 use std::io::IsTerminal;
 use std::time::{Duration, Instant};
 
@@ -21,10 +22,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Demo(args) => run_demo(args),
-        Commands::Themes => {
-            print_themes();
-            Ok(())
-        }
+        Commands::Themes(args) => print_themes(args),
         Commands::Keys(args) => print_keys(args),
         Commands::Config(args) => run_config(args),
     }
@@ -137,40 +135,110 @@ fn config_validate(args: cli::ConfigValidateArgs) -> Result<()> {
     Ok(())
 }
 
-fn print_themes() {
-    let mut out = String::new();
-    out.push_str("Available themes:\n");
-    for theme in theme::themes() {
-        out.push_str(&format!("- {}: {}\n", theme.name, theme.description));
+#[derive(Serialize)]
+struct ThemesJson<'a> {
+    themes: Vec<ThemeInfo<'a>>,
+}
+
+#[derive(Serialize)]
+struct ThemeInfo<'a> {
+    name: &'a str,
+    description: &'a str,
+}
+
+fn print_themes(args: cli::ThemesArgs) -> Result<()> {
+    match args.format {
+        cli::OutputFormat::Text => {
+            let mut out = String::new();
+            out.push_str("Available themes:\n");
+            for theme in theme::themes() {
+                out.push_str(&format!("- {}: {}\n", theme.name, theme.description));
+            }
+            print!("{}", out);
+            Ok(())
+        }
+        cli::OutputFormat::Json => {
+            let list = theme::themes();
+            let payload = ThemesJson {
+                themes: list
+                    .iter()
+                    .map(|t| ThemeInfo {
+                        name: t.name,
+                        description: t.description,
+                    })
+                    .collect(),
+            };
+            println!("{}", serde_json::to_string_pretty(&payload)?);
+            Ok(())
+        }
     }
-    print!("{}", out);
 }
 
 fn print_keys(args: cli::KeysArgs) -> Result<()> {
     let keymap = config::resolve_key_bindings(args.config.as_deref())?;
-    let mut out = String::new();
-    out.push_str("Key bindings:\n");
-    out.push_str(&format!(
-        "- {}: cycle theme\n",
-        keys::key_list_display(&keymap.cycle_theme)
-    ));
-    out.push_str(&format!(
-        "- {}: toggle high contrast\n",
-        keys::key_list_display(&keymap.toggle_high_contrast)
-    ));
-    out.push_str(&format!(
-        "- {}: toggle color\n",
-        keys::key_list_display(&keymap.toggle_color)
-    ));
-    out.push_str(&format!(
-        "- {}: toggle reduced motion\n",
-        keys::key_list_display(&keymap.toggle_reduced_motion)
-    ));
-    out.push_str(&format!(
-        "- {}: toggle help\n",
-        keys::key_list_display(&keymap.toggle_help)
-    ));
-    out.push_str(&format!("- {}: quit\n", keymap.quit_label()));
-    print!("{}", out);
-    Ok(())
+
+    match args.format {
+        cli::OutputFormat::Text => {
+            let mut out = String::new();
+            out.push_str("Key bindings:\n");
+            out.push_str(&format!(
+                "- {}: cycle theme\n",
+                keys::key_list_display(&keymap.cycle_theme)
+            ));
+            out.push_str(&format!(
+                "- {}: toggle high contrast\n",
+                keys::key_list_display(&keymap.toggle_high_contrast)
+            ));
+            out.push_str(&format!(
+                "- {}: toggle color\n",
+                keys::key_list_display(&keymap.toggle_color)
+            ));
+            out.push_str(&format!(
+                "- {}: toggle reduced motion\n",
+                keys::key_list_display(&keymap.toggle_reduced_motion)
+            ));
+            out.push_str(&format!(
+                "- {}: toggle help\n",
+                keys::key_list_display(&keymap.toggle_help)
+            ));
+            out.push_str(&format!("- {}: quit\n", keymap.quit_label()));
+            print!("{}", out);
+            Ok(())
+        }
+        cli::OutputFormat::Json => {
+            #[derive(Serialize)]
+            struct KeysJson {
+                cycle_theme: Vec<String>,
+                toggle_high_contrast: Vec<String>,
+                toggle_color: Vec<String>,
+                toggle_reduced_motion: Vec<String>,
+                toggle_help: Vec<String>,
+                quit: Vec<String>,
+            }
+
+            fn labels(list: &[keys::KeySpec]) -> Vec<String> {
+                use std::collections::HashSet;
+                let mut out = Vec::<String>::new();
+                let mut seen = HashSet::<String>::new();
+                for &k in list {
+                    let label = keys::key_spec_display(k);
+                    if seen.insert(label.clone()) {
+                        out.push(label);
+                    }
+                }
+                out
+            }
+
+            let payload = KeysJson {
+                cycle_theme: labels(&keymap.cycle_theme),
+                toggle_high_contrast: labels(&keymap.toggle_high_contrast),
+                toggle_color: labels(&keymap.toggle_color),
+                toggle_reduced_motion: labels(&keymap.toggle_reduced_motion),
+                toggle_help: labels(&keymap.toggle_help),
+                quit: keymap.quit_labels(),
+            };
+            println!("{}", serde_json::to_string_pretty(&payload)?);
+            Ok(())
+        }
+    }
 }

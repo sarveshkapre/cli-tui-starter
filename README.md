@@ -32,6 +32,8 @@ cli-tui-starter demo --theme mono --high-contrast
 cli-tui-starter demo --config ~/.config/cli-tui-starter/config.toml --color --motion
 cli-tui-starter themes
 cli-tui-starter keys
+cli-tui-starter themes --format json
+cli-tui-starter keys --format json
 cli-tui-starter keys --config ~/.config/cli-tui-starter/config.toml
 ```
 

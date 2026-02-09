@@ -17,7 +17,7 @@ pub enum Commands {
     /// Launch the interactive TUI demo.
     Demo(DemoArgs),
     /// List available themes.
-    Themes,
+    Themes(ThemesArgs),
     /// Print key bindings.
     Keys(KeysArgs),
     /// Manage config files.
@@ -72,6 +72,17 @@ pub struct KeysArgs {
     /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
     #[arg(long)]
     pub config: Option<PathBuf>,
+
+    /// Output format.
+    #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
+    pub format: OutputFormat,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct ThemesArgs {
+    /// Output format.
+    #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
+    pub format: OutputFormat,
 }
 
 #[derive(Args, Debug, Clone)]
@@ -103,6 +114,12 @@ pub struct ConfigValidateArgs {
     /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
     #[arg(long)]
     pub config: Option<PathBuf>,
+}
+
+#[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OutputFormat {
+    Text,
+    Json,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]

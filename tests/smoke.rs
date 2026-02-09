@@ -14,12 +14,32 @@ fn prints_themes() {
 }
 
 #[test]
+fn prints_themes_json() {
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["themes", "--format", "json"])
+        .assert()
+        .success()
+        .stdout(contains("\"themes\""))
+        .stdout(contains("\"aurora\""));
+}
+
+#[test]
 fn prints_keys() {
     let mut cmd = cargo_bin_cmd!("cli-tui-starter");
     cmd.arg("keys")
         .assert()
         .success()
         .stdout(contains("Key bindings"));
+}
+
+#[test]
+fn prints_keys_json() {
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["keys", "--format", "json"])
+        .assert()
+        .success()
+        .stdout(contains("\"cycle_theme\""))
+        .stdout(contains("\"quit\""));
 }
 
 #[test]
