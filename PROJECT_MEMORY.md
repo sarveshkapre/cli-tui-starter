@@ -1,5 +1,31 @@
 # PROJECT_MEMORY
 
+## 2026-02-09 - Non-interactive `demo --no-tty` static preview rendering
+- Decision: Add `cli-tui-starter demo --no-tty` to render a one-frame static preview to stdout (default 80x24) with `--width/--height` overrides.
+- Why: Enables CI/docs-friendly verification and makes it possible to demonstrate the UI without an interactive TTY (avoids hangs and improves onboarding).
+- Evidence:
+  - Files: `src/cli.rs`, `src/main.rs`, `src/ui.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`, `docs/ROADMAP.md`, `CHANGELOG.md`
+  - Commands: `cargo test`, `make check`, `cargo run -- demo --no-tty --width 60 --height 18`
+- Commit: `7aa5460f4049b4132a6ef86a0ff3420d5bf0a2bf`
+- Confidence: High
+- Trust label: Trusted (local code/tests)
+- Follow-ups:
+  - Consider adding an ASCII-only render mode for terminals/logs that dislike box-drawing glyphs.
+
+## 2026-02-09 - Machine-readable `config validate` output + Windows notes
+- Decision:
+  - Add `--format json` to `cli-tui-starter config validate` (success output).
+  - Document minimal Windows terminal compatibility notes in `README.md` and `docs/PROJECT.md`.
+- Why: Improve scripting ergonomics and reduce common cross-platform setup friction.
+- Evidence:
+  - Files: `src/cli.rs`, `src/main.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`, `CHANGELOG.md`
+  - Commands: `make check`, `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json`
+- Commit: `0c6722596f2853fed6c930f1b39ff49d49f86e12`
+- Confidence: High
+- Trust label: Trusted (local code/tests)
+- Follow-ups:
+  - If needed, extend JSON output to represent failures without double-printing (requires centralizing error handling).
+
 ## 2026-02-09 - Deterministic gitleaks CI scan on push events
 - Decision: Configure the `gitleaks` CI job to checkout full history (`fetch-depth: 0`) and rely on the action default invocation.
 - Why: The previous shallow checkout intermittently broke push-range scanning (`fatal: ambiguous argument <base>^..<head>`), creating flaky CI failures.
@@ -150,6 +176,11 @@
 - `gh auth status` (pass)
 - `gh run list -L 10 --branch main --workflow ci` (pass; latest runs on 2026-02-09 were `success`)
 - `make check` (pass)
+- `cargo test` (pass)
+- `cargo run -- demo --no-tty --width 60 --height 18` (pass)
+- `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json` (pass)
+- `gh issue list --limit 20 --json number,title,author,state --jq ...` (pass; no open issues)
+- `gh run watch 21829728935 --exit-status` (pass)
 - `cargo run -- keys` (pass)
 - `cargo run -- themes` (pass)
 - `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- keys` (pass; reflected `[keys]` overrides)
