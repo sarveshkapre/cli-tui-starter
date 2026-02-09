@@ -229,7 +229,10 @@
 - `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
 - `make check` (pass)
 - `gh run list --limit 10 --branch main` (fail; HTTP 429 throttled)
+- `gh run watch 21838748447 --exit-status` (pass)
 
 ## 2026-02-09 - Mistakes and fixes
 - Mistake: Key spec parsing for modified keys (e.g. `ctrl+c`) initially validated the full input string instead of the key segment, rejecting valid specs.
 - Fix: Parse modifiers and key segment separately in `src/keys.rs` and add unit tests + integration smoke coverage.
+- Mistake: Golden snapshot tests compared normalized stdout (`\n`) against expected files that can be checked out as CRLF (`\r\n`) on Windows, causing CI failures.
+- Fix: Normalize newlines for both actual stdout and expected snapshot text in `tests/demo_no_tty_snapshots.rs`.

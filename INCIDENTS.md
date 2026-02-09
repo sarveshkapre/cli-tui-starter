@@ -1,5 +1,24 @@
 # INCIDENTS
 
+## 2026-02-09 - Windows CI failures after adding golden snapshot tests
+- Status: Resolved
+- Impact:
+  - `windows-test` failed on `main` for multiple pushes, blocking the "CI green" invariant.
+  - Affected runs: `21838593394`, `21838596347`, `21838694459`, `21838708175`.
+- Root cause:
+  - Snapshot tests compared captured stdout normalized to `\\n` against `include_str!()` expected text files that were checked out with CRLF (`\\r\\n`) on Windows.
+  - Additionally, an earlier push occurred before running `make check`, so `cargo fmt -- --check` failed in CI.
+- Detection evidence:
+  - `windows-test` logs showed `assertion left == right` where the only diff was `\\n` vs `\\r\\n`.
+  - `check` job logs showed `cargo fmt -- --check` diffs in `src/ui.rs`.
+- Fix:
+  - Normalize newlines for both actual stdout and expected snapshot text in `tests/demo_no_tty_snapshots.rs`.
+  - Run `cargo fmt` and re-run `make check` before pushing follow-up commits.
+  - Verified with successful run: `21838748447` (all jobs passed).
+- Prevention rules:
+  - Any golden/snapshot text comparison must normalize newlines (at minimum `\\r\\n` -> `\\n`) to be Windows-safe.
+  - Always run `make check` locally before pushing to `main` to prevent avoidable CI churn.
+
 ## 2026-02-09 - Flaky `gitleaks` job failures on `main` push CI
 - Status: Resolved
 - Impact:
