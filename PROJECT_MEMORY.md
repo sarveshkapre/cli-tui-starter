@@ -230,6 +230,7 @@
 - `make check` (pass)
 - `gh run list --limit 10 --branch main` (fail; HTTP 429 throttled)
 - `gh run watch 21838748447 --exit-status` (pass)
+- `gh run watch 21838814243 --exit-status` (pass)
 
 ## 2026-02-09 - Mistakes and fixes
 - Mistake: Key spec parsing for modified keys (e.g. `ctrl+c`) initially validated the full input string instead of the key segment, rejecting valid specs.
