@@ -182,6 +182,7 @@
 - `gh issue list --limit 20 --json number,title,author,state --jq ...` (pass; no open issues)
 - `gh run watch 21829728935 --exit-status` (pass)
 - `gh run watch 21829808952 --exit-status` (pass)
+- `gh run watch 21829857898 --exit-status` (pass)
 - `cargo run -- keys` (pass)
 - `cargo run -- themes` (pass)
 - `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- keys` (pass; reflected `[keys]` overrides)
