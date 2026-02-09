@@ -24,3 +24,16 @@
 - Trust label: Verified by automated tests and local smoke commands
 - Follow-ups:
   - Add keybinding customization to the same config file format.
+
+## 2026-02-09 - Security maintenance response for RustSec advisory
+- Decision: Update transitive `time` dependency to `0.3.47` in lockfile to clear `RUSTSEC-2026-0009`.
+- Why: `cargo audit` became a hard quality gate failure in local/CI, blocking production readiness.
+- Evidence:
+  - Local failure and fix commands: `make check`, `cargo update -p time --precise 0.3.47`, `make check`
+  - CI failure reference: run `21808825344` (`check` job failed in `Quality gate`)
+  - Files: `Cargo.lock`
+- Commit: `11513356a9215150c372a851014eb84d847090f1`
+- Confidence: High
+- Trust label: Verified from `cargo audit` output and successful local re-run
+- Follow-ups:
+  - Periodically refresh lockfile before release tagging to avoid last-minute audit breakage.
