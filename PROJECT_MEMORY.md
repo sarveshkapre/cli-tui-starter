@@ -14,6 +14,7 @@
     - `cargo run -- demo --no-tty --ascii --width 80 --height 24 --theme aurora --color --normal-contrast --motion`
     - `git check-attr eol -- tests/snapshots/demo_80x24.txt tests/snapshots/demo_80x24_ascii.txt`
     - `gh run watch 21845631145 --exit-status`
+    - `gh run watch 21845690264 --exit-status`
 - Commit: `0851f5d341a3c6e60b239b2953d777f85e257927` (feature) + `fbdf55e14ef333227ddb2120bc53e2ede257de4b` (gitattributes)
 - Confidence: High
 - Trust label: Trusted (local code/tests + CI green)
@@ -231,6 +232,7 @@
 - `cargo run -- demo --no-tty --ascii --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
 - `git check-attr eol -- tests/snapshots/demo_80x24.txt tests/snapshots/demo_80x24_ascii.txt` (pass; `eol: lf`)
 - `gh run watch 21845631145 --exit-status` (pass)
+- `gh run watch 21845690264 --exit-status` (pass)
 - `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json` (pass)
 - `gh issue list --limit 20 --json number,title,author,state --jq ...` (pass; no open issues)
 - `gh run watch 21829728935 --exit-status` (pass)
