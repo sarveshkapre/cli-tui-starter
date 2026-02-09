@@ -44,6 +44,6 @@ quit = ["q", "esc"]
 3. Publish GitHub release with notes from `docs/RELEASE.md`.
 
 ## Next 3 improvements
-1. Keybinding customization via config file.
-2. Wider terminal size auto-scaling and responsive layout hints.
-3. Optional mouse support with toggles for accessibility.
+1. Add `demo --no-tty` static preview output for CI/docs.
+2. Improve Windows terminal compatibility notes and common key-event quirks.
+3. Optional mouse support with explicit opt-in.

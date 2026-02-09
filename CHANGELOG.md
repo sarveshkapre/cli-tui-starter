@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.1.5 - 2026-02-09
+- Add `cli-tui-starter config init` to generate a commented starter config at the default path.
+- Add `cli-tui-starter config validate` to validate a config file without launching the TUI.
+- Add `--format json` to `themes` and `keys` for scripting use.
+- Always advertise `ctrl+c` as an emergency quit key in `keys` output and the in-app help.
+- Add a Windows CI job that runs `cargo test` on `windows-latest`.
+
 ## 0.1.4 - 2026-02-09
 - Add config file support for `demo` defaults via `$XDG_CONFIG_HOME/cli-tui-starter/config.toml` or `~/.config/cli-tui-starter/config.toml`.
 - Add config-driven key binding overrides via `[keys]` and keep UI/help/`keys` output consistent with the active keymap.

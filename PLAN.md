@@ -25,6 +25,7 @@ make check
 ```
 
 ## Shipped (most recent)
+- 2026-02-09: Config init/validate + JSON outputs + Windows CI test coverage (see `CHANGELOG.md`)
 - 2026-02-09: CI gitleaks reliability hardening + config file defaults + expanded smoke coverage (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.3 demo TTY guard + smoke test (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.2 dependency refresh + env-based no-color (see `CHANGELOG.md`)
@@ -32,6 +33,6 @@ make check
 - 2026-02-01: v0.1.0 initial scaffold
 
 ## Next
-- Add config-based keybinding customization.
+- Add `demo --no-tty` static preview output for CI/docs.
 - Add mouse support behind an explicit toggle.
 - Add automated snapshot tests for narrow and wide terminal layouts.

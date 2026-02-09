@@ -62,6 +62,68 @@
 - Confidence: High
 - Trust label: Verified by automated tests
 
+## 2026-02-09 - Cycle 2: Config scaffolding + machine-readable outputs
+
+### 2026-02-09 - Always advertise emergency quit keys
+- Decision: Always advertise `esc` and `ctrl+c` as quit keys in the help UI and `cli-tui-starter keys`.
+- Why: `ctrl+c` is the expected emergency exit in terminals; showing it reduces confusion and support churn.
+- Evidence:
+  - Files: `src/keys.rs`, `src/ui.rs`, `tests/smoke.rs`
+  - Verification: `make check`
+- Commit: `500aa9cc7de68c5e3d0b9f2cf7b885c5c9d98c17`
+- Confidence: High
+- Trust label: Verified by local tests
+
+### 2026-02-09 - Add `config init`
+- Decision: Add `cli-tui-starter config init` (with `--force` and `--stdout`) to generate a commented starter config at the default path.
+- Why: Reduces onboarding friction and makes the config format discoverable without reading docs.
+- Evidence:
+  - Files: `src/cli.rs`, `src/main.rs`, `src/config.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`
+  - Verification: `make check`, `cargo run -- config init --stdout`
+- Commit: `0c5338a613b2705b1d27be0a08df91b37ed3f3c4`
+- Confidence: High
+- Trust label: Verified by local tests
+
+### 2026-02-09 - Add `config validate`
+- Decision: Add `cli-tui-starter config validate` to validate config files without launching the TUI.
+- Why: Enables fast CI/scripting validation of config edits and improves error feedback loops.
+- Evidence:
+  - Files: `src/cli.rs`, `src/main.rs`, `src/config.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`
+  - Verification: `make check`, `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- config init && cargo run -- config validate`
+- Commit: `6179c35fb0b20d86bb1b038117293d1f0bf7b96f`
+- Confidence: High
+- Trust label: Verified by local tests
+
+### 2026-02-09 - Add `--format json` for `themes` and `keys`
+- Decision: Add `--format json` to `cli-tui-starter themes` and `cli-tui-starter keys`.
+- Why: Provides a stable integration surface for scripts and higher-level tools built on top of the starter.
+- Evidence:
+  - Files: `src/cli.rs`, `src/main.rs`, `tests/smoke.rs`, `Cargo.toml`, `Cargo.lock`
+  - Verification: `make check`, `cargo run -- themes --format json`, `cargo run -- keys --format json`
+- Commit: `75b3133219208becd0bb7693d9d8bb0ad7656464`
+- Confidence: High
+- Trust label: Verified by local tests
+
+### 2026-02-09 - Add Windows CI coverage
+- Decision: Add a Windows job to run `cargo test` on `windows-latest`.
+- Why: Catch cross-platform regressions early (terminal event handling and path env behavior).
+- Evidence:
+  - Files: `.github/workflows/ci.yml`
+  - Verification: GitHub Actions run `21821839896` passed (`windows-test`).
+- Commit: `374221f95be6657900c79b9f0d22201b405a0e97`
+- Confidence: High
+- Trust label: Verified by CI
+
+### 2026-02-09 - Release hygiene: bump to v0.1.5
+- Decision: Bump crate version to `0.1.5` and add a matching `CHANGELOG.md` entry for the new CLI features.
+- Why: Keep `--version` aligned with shipped behavior and avoid “silent” feature drift on main.
+- Evidence:
+  - Files: `Cargo.toml`, `Cargo.lock`, `CHANGELOG.md`
+  - Verification: `make check`
+- Commit: (pending)
+- Confidence: High
+- Trust label: Verified by local tests
+
 ## 2026-02-09 - Bounded market scan notes (untrusted)
 - Signals:
   - Custom key bindings are a documented feature in Textual (bindings API/config patterns).
@@ -80,6 +142,13 @@
 - `cargo run -- keys` (pass)
 - `cargo run -- themes` (pass)
 - `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- keys` (pass; reflected `[keys]` overrides)
+- `cargo run -- config init --stdout` (pass)
+- `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- config init` (pass)
+- `XDG_CONFIG_HOME=$(mktemp -d) cargo run -- config validate` (pass)
+- `cargo run -- themes --format json` (pass)
+- `cargo run -- keys --format json` (pass)
+- `gh run watch 21821839896 --exit-status` (pass)
+- `cargo run -- --version` (pass; prints `0.1.5`)
 
 ## 2026-02-09 - Mistakes and fixes
 - Mistake: Key spec parsing for modified keys (e.g. `ctrl+c`) initially validated the full input string instead of the key segment, rejecting valid specs.

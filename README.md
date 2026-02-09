@@ -68,7 +68,7 @@ toggle_high_contrast = "h"
 toggle_color = "c"
 toggle_reduced_motion = "r"
 toggle_help = "?"
-quit = ["q", "esc"]      # esc always quits even if not listed
+quit = ["q", "esc"]      # esc and ctrl+c always quit even if not listed
 ```
 
 Precedence:

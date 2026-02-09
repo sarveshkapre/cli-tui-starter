@@ -1,9 +1,9 @@
 # RELEASE
 
 ## Release checklist
-- [ ] `make check` passes locally
-- [ ] CI is green on main
-- [ ] `CHANGELOG.md` updated
+- [x] `make check` passes locally (as of 2026-02-09)
+- [x] CI is green on main (run `21821839896`)
+- [x] `CHANGELOG.md` updated
 - [ ] Tag version `vX.Y.Z`
 - [ ] Publish GitHub release
 
