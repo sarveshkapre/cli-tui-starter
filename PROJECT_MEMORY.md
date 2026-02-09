@@ -1,5 +1,23 @@
 # PROJECT_MEMORY
 
+## 2026-02-09 - ASCII-only `demo --no-tty` output + newline-stable snapshot fixtures
+- Decision:
+  - Add `cli-tui-starter demo --no-tty --ascii` and config support (`[demo] ascii = true`) to render ASCII-only static previews.
+  - Add `.gitattributes` rule to keep `tests/snapshots/*.txt` checked out with LF to avoid Windows CRLF diffs.
+- Why:
+  - ASCII previews are more reliable in logs and terminals that don't render box-drawing glyphs well.
+  - Line-ending stability prevents cross-platform snapshot churn and CI failures.
+- Evidence:
+  - Files: `.gitattributes`, `src/cli.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/demo_no_tty_ascii_snapshots.rs`, `tests/snapshots/demo_*_ascii.txt`, `README.md`, `docs/PROJECT.md`, `CHANGELOG.md`, `CLONE_FEATURES.md`
+  - Commands (pass):
+    - `make check`
+    - `cargo run -- demo --no-tty --ascii --width 80 --height 24 --theme aurora --color --normal-contrast --motion`
+    - `git check-attr eol -- tests/snapshots/demo_80x24.txt tests/snapshots/demo_80x24_ascii.txt`
+    - `gh run watch 21845631145 --exit-status`
+- Commit: `0851f5d341a3c6e60b239b2953d777f85e257927` (feature) + `fbdf55e14ef333227ddb2120bc53e2ede257de4b` (gitattributes)
+- Confidence: High
+- Trust label: Trusted (local code/tests + CI green)
+
 ## 2026-02-09 - Demo "Showcase" panel + clearer status labels
 - Decision: Expand the demo body with a compact "Showcase" panel that demonstrates common widget patterns (gauge + table), and clarify header status labels to match config semantics (`No color`, `Reduced motion`).
 - Why: A starter's demo is the product; showing real widget primitives plus clear state labels improves onboarding, expectations, and regressions visibility.
@@ -210,6 +228,9 @@
 - `make check` (pass)
 - `cargo test` (pass)
 - `cargo run -- demo --no-tty --width 60 --height 18` (pass)
+- `cargo run -- demo --no-tty --ascii --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
+- `git check-attr eol -- tests/snapshots/demo_80x24.txt tests/snapshots/demo_80x24_ascii.txt` (pass; `eol: lf`)
+- `gh run watch 21845631145 --exit-status` (pass)
 - `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json` (pass)
 - `gh issue list --limit 20 --json number,title,author,state --jq ...` (pass; no open issues)
 - `gh run watch 21829728935 --exit-status` (pass)
