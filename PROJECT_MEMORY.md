@@ -64,6 +64,17 @@
 
 ## 2026-02-09 - Cycle 2: Config scaffolding + machine-readable outputs
 
+### 2026-02-09 - Prioritization snapshot (scores 1-5)
+- Selected:
+  - `config init` (impact 5, effort 2, strategic fit 5, differentiation 3, risk 1, confidence 5)
+  - `config validate` (impact 4, effort 2, strategic fit 5, differentiation 2, risk 1, confidence 5)
+  - `themes/keys --format json` (impact 4, effort 3, strategic fit 4, differentiation 2, risk 2, confidence 4)
+  - Always advertise `ctrl+c` quit (impact 3, effort 1, strategic fit 4, differentiation 1, risk 1, confidence 5)
+  - Windows CI `cargo test` (impact 4, effort 1, strategic fit 4, differentiation 1, risk 2, confidence 4)
+- Deferred:
+  - `demo --no-tty` static preview (impact 4, effort 3, strategic fit 4, differentiation 2, risk 2, confidence 3)
+  - Windows compatibility notes (impact 3, effort 2, strategic fit 3, differentiation 1, risk 1, confidence 3)
+
 ### 2026-02-09 - Always advertise emergency quit keys
 - Decision: Always advertise `esc` and `ctrl+c` as quit keys in the help UI and `cli-tui-starter keys`.
 - Why: `ctrl+c` is the expected emergency exit in terminals; showing it reduces confusion and support churn.
