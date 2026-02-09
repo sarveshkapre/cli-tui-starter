@@ -1,4 +1,5 @@
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{ArgAction, Args, Parser, Subcommand, ValueEnum};
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -23,18 +24,45 @@ pub enum Commands {
 
 #[derive(Args, Debug, Clone)]
 pub struct DemoArgs {
-    /// Theme to use (by name). Defaults to "aurora".
-    #[arg(long, value_enum, default_value_t = ThemeName::Aurora)]
-    pub theme: ThemeName,
+    /// Theme to use (by name).
+    #[arg(long, value_enum)]
+    pub theme: Option<ThemeName>,
     /// Disable color output for maximum compatibility.
-    #[arg(long, default_value_t = false)]
+    #[arg(
+        long,
+        action = ArgAction::SetTrue,
+        conflicts_with = "color",
+        default_value_t = false
+    )]
     pub no_color: bool,
+    /// Force-enable color output and override config/environment no-color defaults.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub color: bool,
     /// Use a high-contrast palette for better visibility.
-    #[arg(long, default_value_t = false)]
+    #[arg(
+        long,
+        action = ArgAction::SetTrue,
+        conflicts_with = "normal_contrast",
+        default_value_t = false
+    )]
     pub high_contrast: bool,
+    /// Disable high-contrast mode.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub normal_contrast: bool,
     /// Reduce motion (slower refresh, no animation).
-    #[arg(long, default_value_t = false)]
+    #[arg(
+        long,
+        action = ArgAction::SetTrue,
+        conflicts_with = "motion",
+        default_value_t = false
+    )]
     pub reduced_motion: bool,
+    /// Force-enable motion and override config reduced-motion defaults.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub motion: bool,
+    /// Optional path to config file (TOML).
+    #[arg(long)]
+    pub config: Option<PathBuf>,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]
@@ -52,6 +80,15 @@ impl ThemeName {
             ThemeName::Solar => "solar",
         }
     }
+
+    pub fn parse(value: &str) -> Option<Self> {
+        match value.trim().to_ascii_lowercase().as_str() {
+            "aurora" => Some(ThemeName::Aurora),
+            "mono" => Some(ThemeName::Mono),
+            "solar" => Some(ThemeName::Solar),
+            _ => None,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -63,5 +100,13 @@ mod tests {
         assert_eq!(ThemeName::Aurora.as_str(), "aurora");
         assert_eq!(ThemeName::Mono.as_str(), "mono");
         assert_eq!(ThemeName::Solar.as_str(), "solar");
+    }
+
+    #[test]
+    fn theme_name_parsing_is_case_insensitive() {
+        assert_eq!(ThemeName::parse("AURORA"), Some(ThemeName::Aurora));
+        assert_eq!(ThemeName::parse("mono"), Some(ThemeName::Mono));
+        assert_eq!(ThemeName::parse(" Solar "), Some(ThemeName::Solar));
+        assert_eq!(ThemeName::parse("unknown"), None);
     }
 }

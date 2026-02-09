@@ -1,5 +1,6 @@
 mod app;
 mod cli;
+mod config;
 mod terminal;
 mod theme;
 mod ui;
@@ -31,6 +32,8 @@ fn main() -> Result<()> {
 }
 
 fn run_demo(args: cli::DemoArgs) -> Result<()> {
+    let settings = config::resolve_demo_settings(&args)?;
+
     if !std::io::stdin().is_terminal() || !std::io::stdout().is_terminal() {
         anyhow::bail!(
             "`demo` is an interactive TUI and requires a real terminal (TTY). Try running it \
@@ -42,7 +45,12 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
     let backend = CrosstermBackend::new(guard.stdout());
     let mut terminal = Terminal::new(backend)?;
 
-    let mut app = App::new(args);
+    let mut app = App::new(
+        settings.theme,
+        settings.no_color,
+        settings.high_contrast,
+        settings.reduced_motion,
+    );
     let mut last_tick = Instant::now();
     let tick_rate = if app.reduced_motion {
         Duration::from_millis(500)

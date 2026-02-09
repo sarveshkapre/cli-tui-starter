@@ -11,6 +11,8 @@ anyhow = "1.0.82"
 clap = { version = "4.5.20", features = ["derive"] }
 crossterm = "0.29.0"
 ratatui = "0.30.0"
+serde = { version = "1.0.217", features = ["derive"] }
+toml = "0.8.19"
 unicode-width = "0.1.11"
 
 [dev-dependencies]
