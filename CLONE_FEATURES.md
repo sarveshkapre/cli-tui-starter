@@ -7,10 +7,16 @@
 - Gaps found during codebase exploration
 
 ## Candidate Features To Do
-- [ ] P2: Expand the `demo` screen to showcase a small set of common widgets/layout patterns (tabs, tables, forms, progress) while keeping the code minimal.
-- [ ] P2: Add snapshot tests for `demo --no-tty` output at a few fixed sizes to catch UI regressions without a real terminal.
-- [ ] P3: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
-- [ ] P3: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
+### Cycle 4 (selected)
+- [ ] P1: Expand the `demo` screen to showcase a small set of common widgets/layout patterns (table + gauge) while keeping the code minimal.
+- [ ] P1: Add snapshot tests for `demo --no-tty` output at a few fixed sizes to catch UI regressions without a real terminal.
+- [ ] P1: Fix minor UX drift: make header status labels match config semantics (`No color`, `Reduced motion`) and keep README aligned.
+- [ ] P1: Release hygiene: fix changelog drift and bump patch version for user-visible changes.
+
+### Backlog
+- [ ] P2: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
+- [ ] P2: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
+- [ ] P2: Add an ASCII-only render mode for `demo --no-tty` for terminals/logs that dislike box-drawing glyphs.
 - [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
 - [ ] P3: Add a `demo --record` mode that writes key events + terminal size to a file for reproducible UI debugging.
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
