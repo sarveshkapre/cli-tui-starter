@@ -22,6 +22,16 @@
 - Confidence: High
 - Trust label: Trusted (local code/tests)
 
+## 2026-02-09 - Release hygiene: bump to v0.1.6 + align changelog
+- Decision: Bump crate version to `0.1.6` and align `CHANGELOG.md` so shipped features are listed under the correct release section (avoid "Unreleased" drift on main).
+- Why: Keep `cli-tui-starter --version` and the changelog consistent, and make it obvious which user-visible changes shipped together.
+- Evidence:
+  - Files: `Cargo.toml`, `Cargo.lock`, `CHANGELOG.md`
+  - Commands: `make check`, `cargo run -- --version`
+- Commit: `3888074184ceae67ec4b3da553b904392d0a1d17`
+- Confidence: High
+- Trust label: Trusted (local code/tests)
+
 ## 2026-02-09 - Non-interactive `demo --no-tty` static preview rendering
 - Decision: Add `cli-tui-starter demo --no-tty` to render a one-frame static preview to stdout (default 80x24) with `--width/--height` overrides.
 - Why: Enables CI/docs-friendly verification and makes it possible to demonstrate the UI without an interactive TTY (avoids hangs and improves onboarding).
