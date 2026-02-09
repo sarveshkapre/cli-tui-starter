@@ -102,5 +102,5 @@ fn keys_reflect_config_overrides_via_xdg_config_home() {
         .assert()
         .success()
         .stdout(contains("- n: cycle theme"))
-        .stdout(contains("- x/esc: quit"));
+        .stdout(contains("- x/esc/ctrl+c: quit"));
 }

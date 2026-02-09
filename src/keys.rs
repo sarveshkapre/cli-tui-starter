@@ -93,7 +93,11 @@ impl KeyBindings {
     }
 
     pub fn quit_label(&self) -> String {
-        // Always advertise `esc` as a safe exit path even if it's not set in config.
+        self.quit_labels().join("/")
+    }
+
+    pub fn quit_labels(&self) -> Vec<String> {
+        // Always advertise `esc` and `ctrl+c` as safe exit paths even if they're not set in config.
         let mut out = Vec::<String>::new();
         let mut seen = HashSet::<String>::new();
 
@@ -104,11 +108,13 @@ impl KeyBindings {
             }
         }
 
-        if seen.insert("esc".to_string()) {
-            out.push("esc".to_string());
+        for label in ["esc", "ctrl+c"] {
+            if seen.insert(label.to_string()) {
+                out.push(label.to_string());
+            }
         }
 
-        out.join("/")
+        out
     }
 }
 
