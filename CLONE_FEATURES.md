@@ -35,7 +35,7 @@
 
 ### Auto-discovered Open Checklist Items (2026-02-09)
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] `make check` passes locally
-- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [ ] CI is green on main (pending latest push completion)
+- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] CI is green on main (run `21808947535`)
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] `CHANGELOG.md` updated
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [ ] Tag version `vX.Y.Z`
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [ ] Publish GitHub release
