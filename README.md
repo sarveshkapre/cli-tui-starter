@@ -47,6 +47,11 @@ cli-tui-starter config init
 cli-tui-starter config init --stdout
 ```
 
+Validate config:
+```bash
+cli-tui-starter config validate
+```
+
 Schema:
 ```toml
 [demo]

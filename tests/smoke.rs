@@ -155,3 +155,42 @@ fn config_init_force_overwrites_existing_file() {
     assert!(contents.contains("# cli-tui-starter config"));
     assert!(!contents.contains("sentinel"));
 }
+
+#[test]
+fn config_validate_succeeds_for_default_xdg_path() {
+    let root = unique_temp_dir();
+    let config_dir = root.join("cli-tui-starter");
+    fs::create_dir_all(&config_dir).expect("create config dir");
+    fs::write(config_dir.join("config.toml"), dummy_config_for_validate()).expect("write config");
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "validate"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .success()
+        .stdout(contains("Config OK:"));
+}
+
+#[test]
+fn config_validate_fails_when_default_missing() {
+    let root = unique_temp_dir();
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "validate"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .failure()
+        .stderr(contains("config file not found"))
+        .stderr(contains("config init"));
+}
+
+fn dummy_config_for_validate() -> &'static str {
+    r#"
+    [demo]
+    theme = "aurora"
+
+    [keys]
+    cycle_theme = "t"
+    quit = "q"
+    "#
+}

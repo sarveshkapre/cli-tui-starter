@@ -21,6 +21,7 @@ make dev
 - Override path: `cli-tui-starter demo --config /path/to/config.toml`
 - Keys preview (same config): `cli-tui-starter keys --config /path/to/config.toml`
 - Generate a starter config: `cli-tui-starter config init` (use `--stdout` to print)
+- Validate config: `cli-tui-starter config validate`
 - CLI override flags:
   - color: `--no-color` / `--color`
   - contrast: `--high-contrast` / `--normal-contrast`

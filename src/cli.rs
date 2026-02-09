@@ -84,6 +84,8 @@ pub struct ConfigArgs {
 pub enum ConfigCommands {
     /// Write a commented starter config file to the default config path.
     Init(ConfigInitArgs),
+    /// Parse and validate a config file without launching the TUI.
+    Validate(ConfigValidateArgs),
 }
 
 #[derive(Args, Debug, Clone)]
@@ -94,6 +96,13 @@ pub struct ConfigInitArgs {
     /// Print the starter config to stdout instead of writing a file.
     #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
     pub stdout: bool,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct ConfigValidateArgs {
+    /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
+    #[arg(long)]
+    pub config: Option<PathBuf>,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]

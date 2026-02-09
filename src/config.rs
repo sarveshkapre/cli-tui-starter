@@ -281,6 +281,11 @@ quit = ["q", "esc"]        # `esc` and `ctrl+c` always quit even if not listed
 "#
 }
 
+pub fn validate_config_file(path: &Path) -> Result<()> {
+    let _ = load_config_bundle(Some(path))?;
+    Ok(())
+}
+
 fn env_disables_color_current() -> bool {
     env_disables_color(
         env::var_os("NO_COLOR").as_deref(),

@@ -85,6 +85,7 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
 fn run_config(args: cli::ConfigArgs) -> Result<()> {
     match args.command {
         cli::ConfigCommands::Init(init) => config_init(init),
+        cli::ConfigCommands::Validate(validate) => config_validate(validate),
     }
 }
 
@@ -111,6 +112,28 @@ fn config_init(args: cli::ConfigInitArgs) -> Result<()> {
     std::fs::write(&path, config::starter_config_toml())?;
 
     println!("Wrote config: {}", path.display());
+    Ok(())
+}
+
+fn config_validate(args: cli::ConfigValidateArgs) -> Result<()> {
+    let path = match args.config {
+        Some(path) => path,
+        None => {
+            let path = config::default_config_path().ok_or_else(|| {
+                anyhow::anyhow!("cannot determine default config path (HOME not set)")
+            })?;
+            if !path.exists() {
+                anyhow::bail!(
+                    "config file not found at {} (try `cli-tui-starter config init`)",
+                    path.display()
+                );
+            }
+            path
+        }
+    };
+
+    config::validate_config_file(&path)?;
+    println!("Config OK: {}", path.display());
     Ok(())
 }
 
