@@ -54,6 +54,7 @@ cli-tui-starter config init --stdout
 Validate config:
 ```bash
 cli-tui-starter config validate
+cli-tui-starter config validate --format json
 ```
 
 Schema:
@@ -82,6 +83,12 @@ Precedence:
 - `docs/AGENTS.md`
 - `docs/PLAN.md`
 - `docs/PROJECT.md`
+
+## Windows notes
+- Prefer Windows Terminal (or VS Code's integrated terminal). Older consoles can behave differently with alternate-screen TUIs.
+- If some key combos do not arrive, check your terminal's own keyboard shortcuts first.
+- Use `cli-tui-starter demo --no-tty` to verify rendering without requiring an interactive TTY.
+- If colors look wrong, try `--no-color` or set `NO_COLOR=1`.
 
 ## Docker
 Not applicable. This is a local terminal UI binary.

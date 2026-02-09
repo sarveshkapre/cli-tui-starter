@@ -206,6 +206,22 @@ fn config_validate_succeeds_for_default_xdg_path() {
 }
 
 #[test]
+fn config_validate_json_succeeds_for_default_xdg_path() {
+    let root = unique_temp_dir();
+    let config_dir = root.join("cli-tui-starter");
+    fs::create_dir_all(&config_dir).expect("create config dir");
+    fs::write(config_dir.join("config.toml"), dummy_config_for_validate()).expect("write config");
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "validate", "--format", "json"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .success()
+        .stdout(contains("\"ok\": true"))
+        .stdout(contains("\"path\""));
+}
+
+#[test]
 fn config_validate_fails_when_default_missing() {
     let root = unique_temp_dir();
 

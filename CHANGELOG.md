@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Add `cli-tui-starter demo --no-tty` to print a static preview without requiring a TTY (useful for CI/docs).
+- Add `--format json` to `cli-tui-starter config validate` for scripting/CI use.
 
 ## 0.1.5 - 2026-02-09
 - Add `cli-tui-starter config init` to generate a commented starter config at the default path.

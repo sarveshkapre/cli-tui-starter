@@ -123,6 +123,10 @@ pub struct ConfigValidateArgs {
     /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
     #[arg(long)]
     pub config: Option<PathBuf>,
+
+    /// Output format.
+    #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
+    pub format: OutputFormat,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]

@@ -147,7 +147,23 @@ fn config_validate(args: cli::ConfigValidateArgs) -> Result<()> {
     };
 
     config::validate_config_file(&path)?;
-    println!("Config OK: {}", path.display());
+    match args.format {
+        cli::OutputFormat::Text => {
+            println!("Config OK: {}", path.display());
+        }
+        cli::OutputFormat::Json => {
+            #[derive(Serialize)]
+            struct ConfigValidateJson {
+                ok: bool,
+                path: String,
+            }
+            let payload = ConfigValidateJson {
+                ok: true,
+                path: path.display().to_string(),
+            };
+            println!("{}", serde_json::to_string_pretty(&payload)?);
+        }
+    }
     Ok(())
 }
 

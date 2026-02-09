@@ -7,8 +7,6 @@
 - Gaps found during codebase exploration
 
 ## Candidate Features To Do
-- [ ] P2: Improve Windows terminal compatibility notes (ConPTY quirks, recommended terminal apps).
-- [ ] P2: Add JSON output for `config validate` (machine-readable validation status + resolved config path).
 - [ ] P3: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
 - [ ] P3: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
 - [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
@@ -16,6 +14,10 @@
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-09: Added `--format json` to `cli-tui-starter config validate` for machine-readable validation output.
+  Evidence: `src/cli.rs`, `src/main.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`; command `tmp=$(mktemp -d) && XDG_CONFIG_HOME=$tmp cargo run -- config init && XDG_CONFIG_HOME=$tmp cargo run -- config validate --format json`.
+- [x] 2026-02-09: Added minimal Windows terminal compatibility notes to docs.
+  Evidence: `README.md`, `docs/PROJECT.md`.
 - [x] 2026-02-09: Added `cli-tui-starter demo --no-tty` to render a one-frame static preview to stdout (default 80x24) for CI/docs, with `--width/--height` overrides.
   Evidence: `src/cli.rs`, `src/main.rs`, `src/ui.rs`, `tests/smoke.rs`, `README.md`, `docs/PROJECT.md`, `docs/ROADMAP.md`, `CHANGELOG.md`; command `cargo run -- demo --no-tty --width 80 --height 24`.
 - [x] 2026-02-09: Added `cli-tui-starter config init` and `cli-tui-starter config validate` for starter config generation and validation.

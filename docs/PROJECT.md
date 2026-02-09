@@ -22,7 +22,7 @@ make dev
 - Static preview (no TTY required): `cli-tui-starter demo --no-tty` (optionally `--width N --height N`)
 - Keys preview (same config): `cli-tui-starter keys --config /path/to/config.toml`
 - Generate a starter config: `cli-tui-starter config init` (use `--stdout` to print)
-- Validate config: `cli-tui-starter config validate`
+- Validate config: `cli-tui-starter config validate` (use `--format json` for scripting)
 - CLI override flags:
   - color: `--no-color` / `--color`
   - contrast: `--high-contrast` / `--normal-contrast`
@@ -44,7 +44,12 @@ quit = ["q", "esc"]
 2. Tag a version `vX.Y.Z`.
 3. Publish GitHub release with notes from `docs/RELEASE.md`.
 
+## Windows notes
+- Prefer Windows Terminal (or VS Code's integrated terminal). Older consoles can behave differently with alternate-screen TUIs.
+- If some key combos do not arrive, check your terminal's own keyboard shortcuts first.
+- Use `cli-tui-starter demo --no-tty` to sanity-check rendering without requiring an interactive TTY.
+
 ## Next 3 improvements
-1. Improve Windows terminal compatibility notes and common key-event quirks.
-2. Optional mouse support with explicit opt-in.
-3. Add JSON output for `config validate` for scripting/CI use.
+1. Optional mouse support with explicit opt-in.
+2. Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
+3. Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
