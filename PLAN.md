@@ -1,12 +1,13 @@
 # PLAN
 
 ## Product pitch
-Apple-level minimal, keyboard-first Rust TUI starter with themes and accessibility toggles.
+Apple-level minimal, keyboard-first Rust TUI starter with themes, accessibility toggles, and config-driven defaults.
 
 ## Features
 - CLI commands: `demo`, `themes`, `keys`
 - Themes: aurora / mono / solar
 - Accessibility: high-contrast, no-color, reduced motion
+- Config file defaults for demo behavior
 - Panic-safe terminal restore via guard
 - Smoke tests for non-interactive commands
 
@@ -24,39 +25,13 @@ make check
 ```
 
 ## Shipped (most recent)
+- 2026-02-09: CI gitleaks reliability hardening + config file defaults + expanded smoke coverage (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.3 demo TTY guard + smoke test (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.2 dependency refresh + env-based no-color (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.1 responsive layout + adaptive help (see `CHANGELOG.md`)
 - 2026-02-01: v0.1.0 initial scaffold
 
 ## Next
-- Add config file support for defaults (theme/toggles)
-- Expand smoke tests (CLI help/version, invalid args)
-- Add mouse support behind an explicit toggle
-*** Add File: UPDATE.md
-# UPDATE
-
-## Summary
-- Shipped responsive demo layout for narrow terminals and made the help popup size itself safely.
-- Improved header status labels and reduced animation noise in no-color/reduced-motion modes.
-- Added root-level `CHANGELOG.md` and root-level `PLAN.md` for standard repo hygiene.
-
-## Commands run
-```bash
-make check
-```
-
-## Notes
-- `cargo audit` currently reports allowed warnings inherited via `ratatui` dependencies (see `make check` output).
-
-## PR instructions
-If `gh` is available and authenticated:
-```bash
-git push -u origin HEAD
-gh pr create --fill
-```
-
-If not authenticated:
-1. Create a branch: `git checkout -b feat/responsive-layout`
-2. Push it: `git push -u origin feat/responsive-layout`
-3. Open a PR on GitHub from that branch into `main`.
+- Add config-based keybinding customization.
+- Add mouse support behind an explicit toggle.
+- Add automated snapshot tests for narrow and wide terminal layouts.

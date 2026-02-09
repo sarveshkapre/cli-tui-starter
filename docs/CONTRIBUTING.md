@@ -8,4 +8,4 @@
 ## Guidelines
 - Keep changes small and focused.
 - Add or update tests when behavior changes.
-- Update `docs/CHANGELOG.md` for user-facing changes.
+- Update `CHANGELOG.md` (repo root) for user-facing changes.
