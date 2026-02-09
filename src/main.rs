@@ -26,6 +26,7 @@ fn main() -> Result<()> {
             Ok(())
         }
         Commands::Keys(args) => print_keys(args),
+        Commands::Config(args) => run_config(args),
     }
 }
 
@@ -78,6 +79,38 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
     }
 
     terminal.show_cursor()?;
+    Ok(())
+}
+
+fn run_config(args: cli::ConfigArgs) -> Result<()> {
+    match args.command {
+        cli::ConfigCommands::Init(init) => config_init(init),
+    }
+}
+
+fn config_init(args: cli::ConfigInitArgs) -> Result<()> {
+    if args.stdout {
+        print!("{}", config::starter_config_toml());
+        return Ok(());
+    }
+
+    let path = config::default_config_path()
+        .ok_or_else(|| anyhow::anyhow!("cannot determine default config path (HOME not set)"))?;
+
+    if path.exists() && !args.force {
+        anyhow::bail!(
+            "config already exists at {} (use `cli-tui-starter config init --force` to overwrite)",
+            path.display()
+        );
+    }
+
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("invalid config path: {}", path.display()))?;
+    std::fs::create_dir_all(parent)?;
+    std::fs::write(&path, config::starter_config_toml())?;
+
+    println!("Wrote config: {}", path.display());
     Ok(())
 }
 

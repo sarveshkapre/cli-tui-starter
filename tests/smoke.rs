@@ -104,3 +104,54 @@ fn keys_reflect_config_overrides_via_xdg_config_home() {
         .stdout(contains("- n: cycle theme"))
         .stdout(contains("- x/esc/ctrl+c: quit"));
 }
+
+#[test]
+fn config_init_writes_starter_config_to_default_xdg_path() {
+    let root = unique_temp_dir();
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "init"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .success()
+        .stdout(contains("Wrote config:"));
+
+    let path = root.join("cli-tui-starter").join("config.toml");
+    let contents = fs::read_to_string(&path).expect("read config");
+    assert!(contents.contains("[demo]"));
+    assert!(contents.contains("[keys]"));
+}
+
+#[test]
+fn config_init_refuses_to_overwrite_without_force() {
+    let root = unique_temp_dir();
+    let dir = root.join("cli-tui-starter");
+    fs::create_dir_all(&dir).expect("create dir");
+    fs::write(dir.join("config.toml"), "sentinel").expect("write sentinel");
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "init"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .failure()
+        .stderr(contains("already exists"))
+        .stderr(contains("--force"));
+}
+
+#[test]
+fn config_init_force_overwrites_existing_file() {
+    let root = unique_temp_dir();
+    let dir = root.join("cli-tui-starter");
+    fs::create_dir_all(&dir).expect("create dir");
+    fs::write(dir.join("config.toml"), "sentinel").expect("write sentinel");
+
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["config", "init", "--force"])
+        .env("XDG_CONFIG_HOME", &root)
+        .assert()
+        .success();
+
+    let contents = fs::read_to_string(dir.join("config.toml")).expect("read config");
+    assert!(contents.contains("# cli-tui-starter config"));
+    assert!(!contents.contains("sentinel"));
+}

@@ -20,6 +20,7 @@ make dev
 - Default path: `$XDG_CONFIG_HOME/cli-tui-starter/config.toml` or `~/.config/cli-tui-starter/config.toml`
 - Override path: `cli-tui-starter demo --config /path/to/config.toml`
 - Keys preview (same config): `cli-tui-starter keys --config /path/to/config.toml`
+- Generate a starter config: `cli-tui-starter config init` (use `--stdout` to print)
 - CLI override flags:
   - color: `--no-color` / `--color`
   - contrast: `--high-contrast` / `--normal-contrast`

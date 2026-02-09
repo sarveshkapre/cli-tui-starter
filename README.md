@@ -40,6 +40,13 @@ Default config path:
 - `$XDG_CONFIG_HOME/cli-tui-starter/config.toml` (when `XDG_CONFIG_HOME` is set)
 - `~/.config/cli-tui-starter/config.toml` (fallback)
 
+Generate a starter config:
+```bash
+cli-tui-starter config init
+# or print to stdout:
+cli-tui-starter config init --stdout
+```
+
 Schema:
 ```toml
 [demo]

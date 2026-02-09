@@ -20,6 +20,8 @@ pub enum Commands {
     Themes,
     /// Print key bindings.
     Keys(KeysArgs),
+    /// Manage config files.
+    Config(ConfigArgs),
 }
 
 #[derive(Args, Debug, Clone)]
@@ -70,6 +72,28 @@ pub struct KeysArgs {
     /// Optional path to config file (TOML). When omitted, the default config path is used if it exists.
     #[arg(long)]
     pub config: Option<PathBuf>,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct ConfigArgs {
+    #[command(subcommand)]
+    pub command: ConfigCommands,
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum ConfigCommands {
+    /// Write a commented starter config file to the default config path.
+    Init(ConfigInitArgs),
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct ConfigInitArgs {
+    /// Overwrite the config file if it already exists.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub force: bool,
+    /// Print the starter config to stdout instead of writing a file.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub stdout: bool,
 }
 
 #[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq)]

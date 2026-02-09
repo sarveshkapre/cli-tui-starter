@@ -239,7 +239,7 @@ fn resolve_with_sources(
     }
 }
 
-fn default_config_path() -> Option<PathBuf> {
+pub fn default_config_path() -> Option<PathBuf> {
     if let Some(path) = env::var_os("XDG_CONFIG_HOME") {
         return Some(
             PathBuf::from(path)
@@ -253,6 +253,32 @@ fn default_config_path() -> Option<PathBuf> {
             .join("cli-tui-starter")
             .join("config.toml")
     })
+}
+
+pub fn starter_config_toml() -> &'static str {
+    // Keep this ASCII-only, and keep defaults aligned with `Default` impls and README schema.
+    r#"# cli-tui-starter config
+#
+# Precedence:
+# 1) CLI flags
+# 2) Config file values
+# 3) Built-in defaults and NO_COLOR/CLICOLOR=0/TERM=dumb
+
+[demo]
+# theme = "aurora"         # aurora | mono | solar
+theme = "aurora"
+no_color = false
+high_contrast = false
+reduced_motion = false
+
+[keys]
+cycle_theme = "t"
+toggle_high_contrast = "h"
+toggle_color = "c"
+toggle_reduced_motion = "r"
+toggle_help = "?"
+quit = ["q", "esc"]        # `esc` and `ctrl+c` always quit even if not listed
+"#
 }
 
 fn env_disables_color_current() -> bool {
