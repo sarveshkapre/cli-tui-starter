@@ -1,0 +1,2 @@
+# Keep UI snapshots stable across platforms (avoid CRLF checkouts on Windows).
+tests/snapshots/*.txt text eol=lf
