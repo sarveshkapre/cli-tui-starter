@@ -3,19 +3,37 @@
 Beautiful minimal TUI template with commands, themes, accessibility toggles, and config defaults.
 
 ```
-CLI TUI Starter  /  demo
-Theme: aurora | High contrast: off | No color: off | Reduced motion: off
-
-Commands
-- cli-tui-starter demo --theme aurora
-- cli-tui-starter themes
-- cli-tui-starter keys
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ CLI TUI Starter  - ready                                                     │
+│Theme: aurora | High contrast: off | No color: off | Reduced motion: off      │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌ Commands ────────────────────────────────────────────────────────────────────┐
+│cli-tui-starter demo --theme aurora                                           │
+│cli-tui-starter themes                                                        │
+│cli-tui-starter keys                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌ Showcase ────────────────────────────────────────────────────────────────────┐
+│aurora                                                                        │
+│Cool blues with a calm accent                                                 │
+│█████████████████████████████████████62% ███████                              │
+│Action                                     Key                                │
+│cycle theme                                t                                  │
+│help                                       ?                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌ Accessibility ───────────────────────────────────────────────────────────────┐
+│Keys: h contrast | c color | r motion | ? help | q/esc/ctrl+c quit            │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                  Press ? for help. Use q/esc/ctrl+c to exit.                 │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Features
 - Commands: `demo`, `themes`, `keys`
 - Themes with accessible high-contrast and no-color modes
 - Reduced-motion toggle
+- Demo showcase panel (gauge + table) for common widget patterns
 - Config file defaults for `demo` options and key bindings
 - Minimal, readable architecture
 
