@@ -274,29 +274,16 @@ fn print_keys(args: cli::KeysArgs) -> Result<()> {
                 quit: Vec<String>,
             }
 
-            fn labels(list: &[keys::KeySpec]) -> Vec<String> {
-                use std::collections::HashSet;
-                let mut out = Vec::<String>::new();
-                let mut seen = HashSet::<String>::new();
-                for &k in list {
-                    let label = keys::key_spec_display(k);
-                    if seen.insert(label.clone()) {
-                        out.push(label);
-                    }
-                }
-                out
-            }
-
             let payload = KeysJson {
-                cycle_theme: labels(&keymap.cycle_theme),
-                next_panel: labels(&keymap.next_panel),
-                prev_panel: labels(&keymap.prev_panel),
-                list_up: labels(&keymap.list_up),
-                list_down: labels(&keymap.list_down),
-                toggle_high_contrast: labels(&keymap.toggle_high_contrast),
-                toggle_color: labels(&keymap.toggle_color),
-                toggle_reduced_motion: labels(&keymap.toggle_reduced_motion),
-                toggle_help: labels(&keymap.toggle_help),
+                cycle_theme: keys::key_labels(&keymap.cycle_theme),
+                next_panel: keys::key_labels(&keymap.next_panel),
+                prev_panel: keys::key_labels(&keymap.prev_panel),
+                list_up: keys::key_labels(&keymap.list_up),
+                list_down: keys::key_labels(&keymap.list_down),
+                toggle_high_contrast: keys::key_labels(&keymap.toggle_high_contrast),
+                toggle_color: keys::key_labels(&keymap.toggle_color),
+                toggle_reduced_motion: keys::key_labels(&keymap.toggle_reduced_motion),
+                toggle_help: keys::key_labels(&keymap.toggle_help),
                 quit: keymap.quit_labels(),
             };
             println!("{}", serde_json::to_string_pretty(&payload)?);

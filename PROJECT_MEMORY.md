@@ -13,6 +13,18 @@
 - Confidence: High
 - Trust label: Trusted (local tests)
 
+## 2026-02-10 - Centralize key label rendering and de-duplication
+- Decision: Centralize key-label list rendering in `keys::key_labels()` and reuse it for both human-readable and JSON outputs.
+- Why:
+  - Avoid subtle drift between CLI text output and machine-readable JSON output.
+  - Reduce duplicated code paths around key display and label de-duplication.
+- Evidence:
+  - Files: `src/keys.rs`, `src/main.rs`
+  - Commands (pass):
+    - `make check`
+- Confidence: High
+- Trust label: Trusted (local tests)
+
 ## 2026-02-10 - Tabbed showcase panels + scrolling list demo + configurable navigation keys
 - Decision: Expand the demo showcase into tabbed panels (Overview + List) and add a minimal scrolling list demo with configurable panel/list navigation key bindings.
 - Why:

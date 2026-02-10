@@ -118,16 +118,8 @@ impl KeyBindings {
 
     pub fn quit_labels(&self) -> Vec<String> {
         // Always advertise `esc` and `ctrl+c` as safe exit paths even if they're not set in config.
-        let mut out = Vec::<String>::new();
-        let mut seen = HashSet::<String>::new();
-
-        for &k in &self.quit {
-            let label = key_spec_display(k);
-            if seen.insert(label.clone()) {
-                out.push(label);
-            }
-        }
-
+        let mut out = key_labels(&self.quit);
+        let mut seen = out.iter().cloned().collect::<HashSet<String>>();
         for label in ["esc", "ctrl+c"] {
             if seen.insert(label.to_string()) {
                 out.push(label.to_string());
@@ -136,6 +128,20 @@ impl KeyBindings {
 
         out
     }
+}
+
+pub fn key_labels(keys: &[KeySpec]) -> Vec<String> {
+    let mut out = Vec::<String>::new();
+    let mut seen = HashSet::<String>::new();
+
+    for &k in keys {
+        let label = key_spec_display(k);
+        if seen.insert(label.clone()) {
+            out.push(label);
+        }
+    }
+
+    out
 }
 
 pub fn parse_key_spec(value: &str) -> Result<KeySpec> {
@@ -217,17 +223,7 @@ pub fn key_spec_display(spec: KeySpec) -> String {
 }
 
 pub fn key_list_display(keys: &[KeySpec]) -> String {
-    let mut out = Vec::<String>::new();
-    let mut seen = HashSet::<String>::new();
-
-    for &k in keys {
-        let label = key_spec_display(k);
-        if seen.insert(label.clone()) {
-            out.push(label);
-        }
-    }
-
-    out.join("/")
+    key_labels(keys).join("/")
 }
 
 #[cfg(test)]
@@ -273,5 +269,20 @@ mod tests {
     #[test]
     fn default_keymap_is_valid() {
         KeyBindings::default().validate().unwrap();
+    }
+
+    #[test]
+    fn key_labels_are_deduped_and_stable() {
+        let keys = vec![
+            parse_key_spec("x").unwrap(),
+            parse_key_spec("x").unwrap(),
+            parse_key_spec("backtab").unwrap(),
+        ];
+
+        assert_eq!(
+            key_labels(&keys),
+            vec!["x".to_string(), "shift+tab".to_string()]
+        );
+        assert_eq!(key_list_display(&keys), "x/shift+tab");
     }
 }
