@@ -25,6 +25,9 @@
 - Confidence: High
 - Trust label: Trusted (local tests)
 
+## 2026-02-10 - Verification evidence
+- `make check` (pass)
+
 ## 2026-02-10 - Tabbed showcase panels + scrolling list demo + configurable navigation keys
 - Decision: Expand the demo showcase into tabbed panels (Overview + List) and add a minimal scrolling list demo with configurable panel/list navigation key bindings.
 - Why:
