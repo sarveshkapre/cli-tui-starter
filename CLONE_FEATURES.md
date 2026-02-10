@@ -15,6 +15,8 @@
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-10: Hardened terminal restoration to always show the cursor on exit and to disable raw mode if entering the alternate screen fails after raw mode is enabled.
+  Evidence: `src/terminal.rs`; command `make check`.
 - [x] 2026-02-10: Expanded the demo showcase into tabbed panels (Overview + Scrolling List) with configurable key bindings for panel switching and list navigation; updated in-app help + `keys` output; added a UI regression test for the list panel.
   Evidence: `src/app.rs`, `src/keys.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/snapshots/demo_*.txt`, `tests/snapshots/demo_*_ascii.txt`; command `make check`.
 - [x] 2026-02-09: Added `cli-tui-starter demo --no-tty --ascii` for an ASCII-only static preview (better for logs/limited terminals) and snapshot coverage.

@@ -1,5 +1,18 @@
 # PROJECT_MEMORY
 
+## 2026-02-10 - Harden terminal restoration on demo exit and setup errors
+- Decision: Harden `TerminalGuard` so the cursor is always shown on exit, and raw mode is disabled if entering the alternate screen fails after raw mode has been enabled.
+- Why:
+  - Terminal restoration bugs are high-impact: leaving the cursor hidden or leaving raw mode enabled breaks the user's shell session.
+  - This is a small, low-risk change that improves reliability in both normal and error paths.
+- Evidence:
+  - Files: `src/terminal.rs`
+  - Commands (pass):
+    - `make check`
+- Commit: `1ec5ac38a56cb4354e9b4f1b30a01f8fcbe72c2c`
+- Confidence: High
+- Trust label: Trusted (local tests)
+
 ## 2026-02-10 - Tabbed showcase panels + scrolling list demo + configurable navigation keys
 - Decision: Expand the demo showcase into tabbed panels (Overview + List) and add a minimal scrolling list demo with configurable panel/list navigation key bindings.
 - Why:
