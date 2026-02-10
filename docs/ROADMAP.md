@@ -5,5 +5,5 @@
 - Demo showcases a couple of common widget patterns (gauge + table) while staying minimal.
 
 ## Next
-- Expand the demo to showcase more widgets/layouts (tabs, forms, scrolling lists) without growing the codebase too much.
+- Expand the demo to showcase more widgets/layouts (forms, scrolling lists, etc.) without growing the codebase too much.
 - Optional mouse input with explicit opt-in.

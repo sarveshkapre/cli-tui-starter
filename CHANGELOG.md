@@ -3,6 +3,7 @@
 ## Unreleased
 - Add `cli-tui-starter demo --no-tty --ascii` for an ASCII-only static preview (better for logs/terminals that dislike box-drawing).
 - Add `.gitattributes` rule to keep snapshot fixtures checked out with LF to prevent Windows newline diffs.
+- Expand the demo showcase into tabbed panels (Overview + Scrolling List) and make panel/list navigation keys configurable.
 
 ## 0.1.6 - 2026-02-09
 - Expand the demo with a compact "Showcase" panel that demonstrates common widget patterns (gauge + table) while staying minimal.

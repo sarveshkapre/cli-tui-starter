@@ -33,6 +33,10 @@ make dev
 ```toml
 [keys]
 cycle_theme = "t"
+next_panel = "tab"
+prev_panel = "backtab"
+list_up = "up"
+list_down = "down"
 toggle_high_contrast = "h"
 toggle_color = "c"
 toggle_reduced_motion = "r"

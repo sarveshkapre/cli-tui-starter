@@ -15,6 +15,8 @@
 - [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
 
 ## Implemented
+- [x] 2026-02-10: Expanded the demo showcase into tabbed panels (Overview + Scrolling List) with configurable key bindings for panel switching and list navigation; updated in-app help + `keys` output; added a UI regression test for the list panel.
+  Evidence: `src/app.rs`, `src/keys.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/snapshots/demo_*.txt`, `tests/snapshots/demo_*_ascii.txt`; command `make check`.
 - [x] 2026-02-09: Added `cli-tui-starter demo --no-tty --ascii` for an ASCII-only static preview (better for logs/limited terminals) and snapshot coverage.
   Evidence: `src/cli.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/demo_no_tty_ascii_snapshots.rs`, `tests/snapshots/demo_*_ascii.txt`, `README.md`, `docs/PROJECT.md`; command `make check`.
 - [x] 2026-02-09: Stabilized snapshot fixtures on Windows by enforcing LF checkout via `.gitattributes`.
@@ -59,7 +61,7 @@
 ## Insights
 - Gap map (trusted, local):
   - Missing: opt-in mouse support.
-  - Weak: demo breadth (needs tabs/forms/scrolling list examples).
+  - Weak: demo breadth (needs a minimal form/text-input example).
   - Parity: help overlay + configurable key bindings (now present).
   - Differentiator: CI-friendly `demo --no-tty` plus golden UI snapshots.
 - CI failure pattern from runs `21557276579`, `21557279815`, and `21557375125` is a flaky gitleaks push-range scan on shallow checkout (`fetch-depth: 1`).
@@ -67,6 +69,7 @@
 - A new advisory (`RUSTSEC-2026-0009`) affected transitive `time`; lockfile updates should be part of routine maintenance before release tagging.
 - Market expectations (untrusted, external):
   - Most mature TUIs provide a discoverable in-app help overlay and user-customizable keybindings (often via config).
+  - Tabs and scrolling list widgets are common in TUI demo galleries/templates (useful as a starter's "widget cookbook").
   - The Ratatui ecosystem explicitly encourages snapshot-style testing using `TestBackend` to catch UI regressions.
   - Several popular TUI stacks (e.g. Charm's Bubble Tea) include a compact, auto-generated help view derived from key bindings.
     Sources:
@@ -74,7 +77,10 @@
     - https://github.com/ratatui/templates
     - https://github.com/ohmyroot/ratatui-template
     - https://ratatui.rs/recipes/testing/snapshots/
+    - https://ratatui.rs/widgets/tabs/
+    - https://ratatui.rs/widgets/list/
     - https://github.com/charmbracelet/bubbles
+    - https://github.com/charmbracelet/bubbles/tree/master/help
     - https://textual.textualize.io/guide/input/#bindings
     - https://github.com/vadimdemedes/ink
 - Product insight:

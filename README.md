@@ -13,8 +13,8 @@ Beautiful minimal TUI template with commands, themes, accessibility toggles, and
 │cli-tui-starter keys                                                          │
 └──────────────────────────────────────────────────────────────────────────────┘
 ┌ Showcase ────────────────────────────────────────────────────────────────────┐
+│ Overview │ List                                                              │
 │aurora                                                                        │
-│Cool blues with a calm accent                                                 │
 │█████████████████████████████████████62% ███████                              │
 │Action                                     Key                                │
 │cycle theme                                t                                  │
@@ -33,7 +33,7 @@ Beautiful minimal TUI template with commands, themes, accessibility toggles, and
 - Commands: `demo`, `themes`, `keys`
 - Themes with accessible high-contrast and no-color modes
 - Reduced-motion toggle
-- Demo showcase panel (gauge + table) for common widget patterns
+- Demo showcase panels (tabs + gauge + table + scrolling list) for common widget patterns
 - Config file defaults for `demo` options and key bindings
 - Minimal, readable architecture
 
@@ -87,6 +87,10 @@ ascii = false            # ASCII-only glyphs for `demo --no-tty`
 
 [keys]
 cycle_theme = "t"
+next_panel = "tab"
+prev_panel = "backtab"
+list_up = "up"
+list_down = "down"
 toggle_high_contrast = "h"
 toggle_color = "c"
 toggle_reduced_motion = "r"

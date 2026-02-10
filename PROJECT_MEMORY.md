@@ -1,5 +1,21 @@
 # PROJECT_MEMORY
 
+## 2026-02-10 - Tabbed showcase panels + scrolling list demo + configurable navigation keys
+- Decision: Expand the demo showcase into tabbed panels (Overview + List) and add a minimal scrolling list demo with configurable panel/list navigation key bindings.
+- Why:
+  - Tabs + lists are common building blocks; having them in the starter demo improves product usefulness and gives contributors a concrete reference pattern.
+  - Keeping navigation keys inside the existing `[keys]` config prevents help/`keys` drift as the demo grows.
+- Evidence:
+  - Files: `src/app.rs`, `src/keys.rs`, `src/config.rs`, `src/main.rs`, `src/ui.rs`, `tests/snapshots/demo_*.txt`, `tests/snapshots/demo_*_ascii.txt`, `README.md`, `docs/PROJECT.md`, `docs/ROADMAP.md`, `CHANGELOG.md`, `CLONE_FEATURES.md`
+  - Commands (pass):
+    - `make check`
+    - `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion`
+    - `cargo run -- keys --format json`
+    - `gh run watch 21855370758 --exit-status`
+- Commit: `e0981e4bf67f5a56cc242814523b04a9884c2f15`
+- Confidence: High
+- Trust label: Trusted (local tests + CI green)
+
 ## 2026-02-09 - ASCII-only `demo --no-tty` output + newline-stable snapshot fixtures
 - Decision:
   - Add `cli-tui-starter demo --no-tty --ascii` and config support (`[demo] ascii = true`) to render ASCII-only static previews.
@@ -222,6 +238,12 @@
   - https://ratatui.rs
   - https://github.com/vadimdemedes/ink
 - Trust label: Untrusted (external web)
+
+## 2026-02-10 - Verification evidence
+- `make check` (pass)
+- `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
+- `cargo run -- keys --format json` (pass)
+- `gh run watch 21855370758 --exit-status` (pass)
 
 ## 2026-02-09 - Verification evidence
 - `gh auth status` (pass)
