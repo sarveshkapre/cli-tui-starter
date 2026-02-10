@@ -73,6 +73,10 @@ impl OneOrManyStrings {
 #[serde(deny_unknown_fields)]
 struct KeysOverridesRaw {
     cycle_theme: Option<OneOrManyStrings>,
+    next_panel: Option<OneOrManyStrings>,
+    prev_panel: Option<OneOrManyStrings>,
+    list_up: Option<OneOrManyStrings>,
+    list_down: Option<OneOrManyStrings>,
     toggle_high_contrast: Option<OneOrManyStrings>,
     toggle_color: Option<OneOrManyStrings>,
     toggle_reduced_motion: Option<OneOrManyStrings>,
@@ -179,6 +183,18 @@ fn apply_keys_overrides(
 
     if let Some(v) = overrides.cycle_theme {
         keymap.cycle_theme = parse_list(v, source, "cycle_theme")?;
+    }
+    if let Some(v) = overrides.next_panel {
+        keymap.next_panel = parse_list(v, source, "next_panel")?;
+    }
+    if let Some(v) = overrides.prev_panel {
+        keymap.prev_panel = parse_list(v, source, "prev_panel")?;
+    }
+    if let Some(v) = overrides.list_up {
+        keymap.list_up = parse_list(v, source, "list_up")?;
+    }
+    if let Some(v) = overrides.list_down {
+        keymap.list_down = parse_list(v, source, "list_down")?;
     }
     if let Some(v) = overrides.toggle_high_contrast {
         keymap.toggle_high_contrast = parse_list(v, source, "toggle_high_contrast")?;
@@ -288,6 +304,10 @@ ascii = false
 
 [keys]
 cycle_theme = "t"
+next_panel = "tab"
+prev_panel = "backtab"
+list_up = "up"
+list_down = "down"
 toggle_high_contrast = "h"
 toggle_color = "c"
 toggle_reduced_motion = "r"

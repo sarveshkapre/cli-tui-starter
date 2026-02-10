@@ -3,6 +3,35 @@ use crate::keys::KeyBindings;
 use crate::theme::{themes, Theme};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DemoPanel {
+    Overview,
+    List,
+}
+
+impl DemoPanel {
+    fn next(self) -> Self {
+        match self {
+            DemoPanel::Overview => DemoPanel::List,
+            DemoPanel::List => DemoPanel::Overview,
+        }
+    }
+
+    fn prev(self) -> Self {
+        match self {
+            DemoPanel::Overview => DemoPanel::List,
+            DemoPanel::List => DemoPanel::Overview,
+        }
+    }
+
+    pub fn index(self) -> usize {
+        match self {
+            DemoPanel::Overview => 0,
+            DemoPanel::List => 1,
+        }
+    }
+}
+
 pub struct App {
     themes: Vec<Theme>,
     theme_index: usize,
@@ -10,6 +39,8 @@ pub struct App {
     pub no_color: bool,
     pub high_contrast: bool,
     pub reduced_motion: bool,
+    panel: DemoPanel,
+    list_selected: usize,
     pub show_help: bool,
     pub should_quit: bool,
     spinner_index: usize,
@@ -22,6 +53,7 @@ impl App {
         high_contrast: bool,
         reduced_motion: bool,
         keymap: KeyBindings,
+        panel: DemoPanel,
     ) -> Self {
         let list = themes();
         let theme_index = list
@@ -36,10 +68,24 @@ impl App {
             no_color,
             high_contrast,
             reduced_motion,
+            panel,
+            list_selected: 0,
             show_help: false,
             should_quit: false,
             spinner_index: 0,
         }
+    }
+
+    pub fn panel(&self) -> DemoPanel {
+        self.panel
+    }
+
+    pub fn list_selected(&self) -> usize {
+        self.list_selected
+    }
+
+    pub fn list_len(&self) -> usize {
+        list_demo_len()
     }
 
     pub fn current_theme(&self) -> Theme {
@@ -84,6 +130,25 @@ impl App {
             self.theme_index = (self.theme_index + 1) % self.themes.len();
             return;
         }
+        if KeyBindings::matches_any(&self.keymap.next_panel, key) {
+            self.panel = self.panel.next();
+            return;
+        }
+        if KeyBindings::matches_any(&self.keymap.prev_panel, key) {
+            self.panel = self.panel.prev();
+            return;
+        }
+        if self.panel == DemoPanel::List {
+            if KeyBindings::matches_any(&self.keymap.list_up, key) {
+                self.list_selected = self.list_selected.saturating_sub(1);
+                return;
+            }
+            if KeyBindings::matches_any(&self.keymap.list_down, key) {
+                let max = list_demo_len().saturating_sub(1);
+                self.list_selected = (self.list_selected + 1).min(max);
+                return;
+            }
+        }
         if KeyBindings::matches_any(&self.keymap.toggle_high_contrast, key) {
             self.high_contrast = !self.high_contrast;
             return;
@@ -100,4 +165,8 @@ impl App {
             self.show_help = !self.show_help;
         }
     }
+}
+
+fn list_demo_len() -> usize {
+    40
 }

@@ -1,10 +1,10 @@
-use crate::app::App;
+use crate::app::{App, DemoPanel};
 use crate::keys;
 use ratatui::layout::{Alignment, Constraint, Direction, Layout, Rect};
 use ratatui::style::{Modifier, Style};
 use ratatui::text::{Line, Span, Text};
 use ratatui::widgets::{
-    Block, Borders, Cell, Clear, Gauge, List, ListItem, Paragraph, Row, Table, Wrap,
+    Block, Borders, Cell, Clear, Gauge, List, ListItem, Paragraph, Row, Table, Tabs, Wrap,
 };
 use ratatui::Frame;
 
@@ -134,12 +134,53 @@ fn draw_showcase_contents(
         return;
     }
 
+    let layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(1), Constraint::Min(0)])
+        .split(inner);
+
+    let tab_titles = vec![
+        Line::from(Span::raw("Overview")),
+        Line::from(Span::raw("List")),
+    ];
+
+    let tabs = Tabs::new(tab_titles)
+        .select(app.panel().index())
+        .highlight_style(base.fg(theme.palette.accent).add_modifier(Modifier::BOLD))
+        .style(base);
+
+    frame.render_widget(tabs, layout[0]);
+
+    match app.panel() {
+        DemoPanel::Overview => draw_showcase_overview(frame, layout[1], app, theme, base),
+        DemoPanel::List => draw_showcase_list(frame, layout[1], app, theme, base),
+    }
+}
+
+fn draw_showcase_overview(
+    frame: &mut Frame,
+    area: Rect,
+    app: &App,
+    theme: &crate::theme::Theme,
+    base: Style,
+) {
+    if area.width <= 2 || area.height <= 2 {
+        return;
+    }
+
     // Keep this stable and non-"animated": the TUI template should demonstrate patterns even in
     // `demo --no-tty` static previews.
     let progress_ratio = 0.62_f64;
     let progress_percent = (progress_ratio * 100.0).round() as u16;
 
-    let theme_lines = if inner.height >= 8 { 3 } else { 2 };
+    // Prefer keeping room for the table even in tighter layouts.
+    let theme_lines = if area.height >= 10 {
+        3
+    } else if area.height >= 7 {
+        2
+    } else {
+        1
+    };
     let layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
@@ -147,22 +188,23 @@ fn draw_showcase_contents(
             Constraint::Length(1),
             Constraint::Min(0),
         ])
-        .split(inner);
+        .split(area);
 
-    let mut theme_info_lines = vec![
-        Line::from(Span::styled(
-            app.current_theme_name(),
-            base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
-        )),
-        Line::from(Span::styled(
+    let mut theme_info_lines = vec![Line::from(Span::styled(
+        app.current_theme_name(),
+        base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
+    ))];
+    if theme_lines >= 2 {
+        theme_info_lines.push(Line::from(Span::styled(
             app.current_theme_description(),
             base.fg(theme.palette.muted),
-        )),
-    ];
+        )));
+    }
     if theme_lines >= 3 {
         theme_info_lines.push(Line::from(Span::raw(format!(
-            "Press {} to cycle themes.",
-            keys::key_list_display(&app.keymap.cycle_theme)
+            "Press {} to cycle themes. Press {} to switch panels.",
+            keys::key_list_display(&app.keymap.cycle_theme),
+            keys::key_list_display(&app.keymap.next_panel),
         ))));
     }
 
@@ -175,7 +217,7 @@ fn draw_showcase_contents(
         .gauge_style(base.fg(theme.palette.accent))
         .label(format!("{progress_percent}%"));
 
-    let rows = vec![
+    let mut rows = vec![
         Row::new(vec![
             Cell::from("cycle theme"),
             Cell::from(keys::key_list_display(&app.keymap.cycle_theme)),
@@ -189,6 +231,8 @@ fn draw_showcase_contents(
             Cell::from(app.keymap.quit_label()),
         ]),
     ];
+    let max_rows = layout[2].height.saturating_sub(1) as usize; // subtract table header
+    rows.truncate(max_rows);
 
     let table = Table::new(
         rows,
@@ -204,6 +248,78 @@ fn draw_showcase_contents(
     frame.render_widget(theme_info, layout[0]);
     frame.render_widget(gauge, layout[1]);
     frame.render_widget(table, layout[2]);
+}
+
+fn draw_showcase_list(
+    frame: &mut Frame,
+    area: Rect,
+    app: &App,
+    theme: &crate::theme::Theme,
+    base: Style,
+) {
+    if area.width <= 2 || area.height <= 2 {
+        return;
+    }
+
+    let layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(2), Constraint::Min(0)])
+        .split(area);
+
+    let hint = Paragraph::new(Text::from(vec![
+        Line::from(Span::styled(
+            "Scrolling list demo",
+            base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
+        )),
+        Line::from(Span::styled(
+            format!(
+                "Use {} / {} to move. {} to switch panels.",
+                keys::key_list_display(&app.keymap.list_up),
+                keys::key_list_display(&app.keymap.list_down),
+                keys::key_list_display(&app.keymap.next_panel)
+            ),
+            base.fg(theme.palette.muted),
+        )),
+    ]))
+    .wrap(Wrap { trim: true })
+    .style(base);
+    frame.render_widget(hint, layout[0]);
+
+    let list_area = layout[1];
+    if list_area.height == 0 {
+        return;
+    }
+
+    let total = app.list_len();
+    let selected = app.list_selected().min(total.saturating_sub(1));
+    let viewport = list_area.height as usize;
+    let mut start = if selected >= viewport {
+        selected + 1 - viewport
+    } else {
+        0
+    };
+    start = start.min(total.saturating_sub(viewport));
+    let end = (start + viewport).min(total);
+
+    let items: Vec<ListItem> = (start..end)
+        .map(|i| {
+            let is_selected = i == selected;
+            let prefix = if is_selected { "> " } else { "  " };
+            let label = format!("{prefix}Item {:02}", i + 1);
+            let line = if is_selected {
+                Line::from(Span::styled(
+                    label,
+                    base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
+                ))
+            } else {
+                Line::from(Span::raw(label))
+            };
+            ListItem::new(line)
+        })
+        .collect();
+
+    let list = List::new(items).style(base);
+    frame.render_widget(list, list_area);
 }
 
 fn accessibility_panel(
@@ -311,6 +427,16 @@ fn draw_help(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
         Line::from(format!(
             "{}: cycle theme",
             keys::key_list_display(&app.keymap.cycle_theme)
+        )),
+        Line::from(format!(
+            "{} / {}: switch panel",
+            keys::key_list_display(&app.keymap.next_panel),
+            keys::key_list_display(&app.keymap.prev_panel)
+        )),
+        Line::from(format!(
+            "{} / {}: list up/down",
+            keys::key_list_display(&app.keymap.list_up),
+            keys::key_list_display(&app.keymap.list_down)
         )),
         Line::from(format!(
             "{}: toggle high contrast",
@@ -492,7 +618,7 @@ pub fn render_static_preview(
 
 #[cfg(test)]
 mod tests {
-    use crate::app::App;
+    use crate::app::{App, DemoPanel};
     use crate::cli::ThemeName;
     use crate::keys::{parse_key_spec, KeyBindings};
     use ratatui::backend::TestBackend;
@@ -527,6 +653,7 @@ mod tests {
             false, // high_contrast
             true,  // reduced_motion
             KeyBindings::default(),
+            DemoPanel::Overview,
         );
 
         let lines = render_lines(80, 24, &app);
@@ -540,7 +667,14 @@ mod tests {
 
     #[test]
     fn wide_layout_places_commands_left_and_panels_right() {
-        let app = App::new(ThemeName::Aurora, true, false, true, KeyBindings::default());
+        let app = App::new(
+            ThemeName::Aurora,
+            true,
+            false,
+            true,
+            KeyBindings::default(),
+            DemoPanel::Overview,
+        );
 
         let lines = render_lines(120, 24, &app);
         let y_commands = find_row(&lines, " Commands ").expect("commands title");
@@ -560,7 +694,14 @@ mod tests {
         };
         keymap.validate().unwrap();
 
-        let mut app = App::new(ThemeName::Aurora, true, false, true, keymap);
+        let mut app = App::new(
+            ThemeName::Aurora,
+            true,
+            false,
+            true,
+            keymap,
+            DemoPanel::Overview,
+        );
         app.show_help = true;
 
         let lines = render_lines(90, 24, &app);
@@ -568,5 +709,23 @@ mod tests {
 
         assert!(merged.contains("n: cycle theme"));
         assert!(merged.contains("!: toggle help"));
+    }
+
+    #[test]
+    fn list_panel_renders_selection_and_hint() {
+        let app = App::new(
+            ThemeName::Aurora,
+            true,
+            false,
+            true,
+            KeyBindings::default(),
+            DemoPanel::List,
+        );
+
+        let lines = render_lines(90, 24, &app);
+        let merged = lines.join("\n");
+
+        assert!(merged.contains("Scrolling list demo"));
+        assert!(merged.contains("> Item 01"));
     }
 }

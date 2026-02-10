@@ -8,6 +8,7 @@ mod ui;
 
 use anyhow::Result;
 use app::App;
+use app::DemoPanel;
 use clap::Parser;
 use cli::{Cli, Commands};
 use crossterm::event::{self, Event};
@@ -41,6 +42,7 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
             resolved.settings.high_contrast,
             resolved.settings.reduced_motion,
             resolved.keys,
+            DemoPanel::Overview,
         );
         print!(
             "{}",
@@ -67,6 +69,7 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
         resolved.settings.high_contrast,
         resolved.settings.reduced_motion,
         resolved.keys,
+        DemoPanel::Overview,
     );
     let mut last_tick = Instant::now();
     let tick_rate = if app.reduced_motion {
@@ -221,6 +224,22 @@ fn print_keys(args: cli::KeysArgs) -> Result<()> {
                 keys::key_list_display(&keymap.cycle_theme)
             ));
             out.push_str(&format!(
+                "- {}: next panel\n",
+                keys::key_list_display(&keymap.next_panel)
+            ));
+            out.push_str(&format!(
+                "- {}: previous panel\n",
+                keys::key_list_display(&keymap.prev_panel)
+            ));
+            out.push_str(&format!(
+                "- {}: list up\n",
+                keys::key_list_display(&keymap.list_up)
+            ));
+            out.push_str(&format!(
+                "- {}: list down\n",
+                keys::key_list_display(&keymap.list_down)
+            ));
+            out.push_str(&format!(
                 "- {}: toggle high contrast\n",
                 keys::key_list_display(&keymap.toggle_high_contrast)
             ));
@@ -244,6 +263,10 @@ fn print_keys(args: cli::KeysArgs) -> Result<()> {
             #[derive(Serialize)]
             struct KeysJson {
                 cycle_theme: Vec<String>,
+                next_panel: Vec<String>,
+                prev_panel: Vec<String>,
+                list_up: Vec<String>,
+                list_down: Vec<String>,
                 toggle_high_contrast: Vec<String>,
                 toggle_color: Vec<String>,
                 toggle_reduced_motion: Vec<String>,
@@ -266,6 +289,10 @@ fn print_keys(args: cli::KeysArgs) -> Result<()> {
 
             let payload = KeysJson {
                 cycle_theme: labels(&keymap.cycle_theme),
+                next_panel: labels(&keymap.next_panel),
+                prev_panel: labels(&keymap.prev_panel),
+                list_up: labels(&keymap.list_up),
+                list_down: labels(&keymap.list_down),
                 toggle_high_contrast: labels(&keymap.toggle_high_contrast),
                 toggle_color: labels(&keymap.toggle_color),
                 toggle_reduced_motion: labels(&keymap.toggle_reduced_motion),

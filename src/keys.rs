@@ -18,6 +18,14 @@ impl KeySpec {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct KeyBindings {
     pub cycle_theme: Vec<KeySpec>,
+    /// Switch to the next demo panel (tabs).
+    pub next_panel: Vec<KeySpec>,
+    /// Switch to the previous demo panel (tabs).
+    pub prev_panel: Vec<KeySpec>,
+    /// Move selection up in list-style demos.
+    pub list_up: Vec<KeySpec>,
+    /// Move selection down in list-style demos.
+    pub list_down: Vec<KeySpec>,
     pub toggle_high_contrast: Vec<KeySpec>,
     pub toggle_color: Vec<KeySpec>,
     pub toggle_reduced_motion: Vec<KeySpec>,
@@ -30,6 +38,10 @@ impl Default for KeyBindings {
     fn default() -> Self {
         Self {
             cycle_theme: vec![parse_key_spec("t").expect("default key spec")],
+            next_panel: vec![parse_key_spec("tab").expect("default key spec")],
+            prev_panel: vec![parse_key_spec("backtab").expect("default key spec")],
+            list_up: vec![parse_key_spec("up").expect("default key spec")],
+            list_down: vec![parse_key_spec("down").expect("default key spec")],
             toggle_high_contrast: vec![parse_key_spec("h").expect("default key spec")],
             toggle_color: vec![parse_key_spec("c").expect("default key spec")],
             toggle_reduced_motion: vec![parse_key_spec("r").expect("default key spec")],
@@ -49,6 +61,10 @@ impl KeyBindings {
         }
 
         ensure_non_empty("cycle_theme", &self.cycle_theme)?;
+        ensure_non_empty("next_panel", &self.next_panel)?;
+        ensure_non_empty("prev_panel", &self.prev_panel)?;
+        ensure_non_empty("list_up", &self.list_up)?;
+        ensure_non_empty("list_down", &self.list_down)?;
         ensure_non_empty("toggle_high_contrast", &self.toggle_high_contrast)?;
         ensure_non_empty("toggle_color", &self.toggle_color)?;
         ensure_non_empty("toggle_reduced_motion", &self.toggle_reduced_motion)?;
@@ -62,6 +78,10 @@ impl KeyBindings {
         let mut seen = HashSet::<KeySpec>::new();
         for (name, keys) in [
             ("cycle_theme", &self.cycle_theme),
+            ("next_panel", &self.next_panel),
+            ("prev_panel", &self.prev_panel),
+            ("list_up", &self.list_up),
+            ("list_down", &self.list_down),
             ("toggle_high_contrast", &self.toggle_high_contrast),
             ("toggle_color", &self.toggle_color),
             ("toggle_reduced_motion", &self.toggle_reduced_motion),
@@ -184,7 +204,8 @@ pub fn key_spec_display(spec: KeySpec) -> String {
         KeyCode::Esc => out.push_str("esc"),
         KeyCode::Enter => out.push_str("enter"),
         KeyCode::Tab => out.push_str("tab"),
-        KeyCode::BackTab => out.push_str("backtab"),
+        // User-facing label; config uses "backtab".
+        KeyCode::BackTab => out.push_str("shift+tab"),
         KeyCode::Up => out.push_str("up"),
         KeyCode::Down => out.push_str("down"),
         KeyCode::Left => out.push_str("left"),
