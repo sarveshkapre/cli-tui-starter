@@ -34,7 +34,7 @@ make dev
 [keys]
 cycle_theme = "t"
 next_panel = "tab"
-prev_panel = "backtab"
+prev_panel = "backtab"    # shift+tab
 list_up = "up"
 list_down = "down"
 toggle_high_contrast = "h"
