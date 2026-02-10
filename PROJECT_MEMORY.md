@@ -12,7 +12,8 @@
     - `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion`
     - `cargo run -- keys --format json`
     - `gh run watch 21855370758 --exit-status`
-- Commit: `e0981e4bf67f5a56cc242814523b04a9884c2f15`
+    - `gh run watch 21855422403 --exit-status`
+- Commit: `e0981e4bf67f5a56cc242814523b04a9884c2f15` + `485392d04040205f7522145329379d8757a85a67`
 - Confidence: High
 - Trust label: Trusted (local tests + CI green)
 
@@ -244,6 +245,7 @@
 - `cargo run -- demo --no-tty --width 80 --height 24 --theme aurora --color --normal-contrast --motion` (pass)
 - `cargo run -- keys --format json` (pass)
 - `gh run watch 21855370758 --exit-status` (pass)
+- `gh run watch 21855422403 --exit-status` (pass)
 
 ## 2026-02-09 - Verification evidence
 - `gh auth status` (pass)
