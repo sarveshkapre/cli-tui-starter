@@ -30,7 +30,7 @@ Beautiful minimal TUI template with commands, themes, accessibility toggles, and
 ```
 
 ## Features
-- Commands: `demo`, `themes`, `keys`
+- Commands: `demo`, `themes`, `keys`, `config` (`init`/`validate`)
 - Themes with accessible high-contrast and no-color modes
 - Reduced-motion toggle
 - Demo showcase panels (tabs + gauge + table + scrolling list) for common widget patterns
