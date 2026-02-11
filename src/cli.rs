@@ -74,6 +74,17 @@ pub struct DemoArgs {
     /// Force-enable motion and override config reduced-motion defaults.
     #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
     pub motion: bool,
+    /// Enable mouse input for interactive demo mode.
+    #[arg(
+        long,
+        action = ArgAction::SetTrue,
+        conflicts_with = "no_mouse",
+        default_value_t = false
+    )]
+    pub mouse: bool,
+    /// Disable mouse input for interactive demo mode.
+    #[arg(long, action = ArgAction::SetTrue, default_value_t = false)]
+    pub no_mouse: bool,
     /// Optional path to config file (TOML).
     #[arg(long)]
     pub config: Option<PathBuf>,

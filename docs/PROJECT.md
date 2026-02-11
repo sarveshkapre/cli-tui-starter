@@ -28,6 +28,7 @@ make dev
   - color: `--no-color` / `--color`
   - contrast: `--high-contrast` / `--normal-contrast`
   - motion: `--reduced-motion` / `--motion`
+  - mouse: `--mouse` / `--no-mouse`
 
 ## Key bindings config
 ```toml
@@ -55,6 +56,6 @@ quit = ["q", "esc"]
 - Use `cli-tui-starter demo --no-tty` to sanity-check rendering without requiring an interactive TTY.
 
 ## Next 3 improvements
-1. Optional mouse support with explicit opt-in.
+1. Add a minimal form/text-input demo panel to round out common starter patterns.
 2. Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
 3. Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).

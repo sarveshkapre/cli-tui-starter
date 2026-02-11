@@ -59,16 +59,17 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
         );
     }
 
-    let mut guard = terminal::TerminalGuard::enter()?;
+    let mut guard = terminal::TerminalGuard::enter(resolved.settings.mouse)?;
     let backend = CrosstermBackend::new(guard.stdout());
     let mut terminal = Terminal::new(backend)?;
 
-    let mut app = App::new(
+    let mut app = App::new_with_mouse(
         resolved.settings.theme,
         resolved.settings.no_color,
         resolved.settings.high_contrast,
         resolved.settings.reduced_motion,
         resolved.keys,
+        resolved.settings.mouse,
         DemoPanel::Overview,
     );
     let mut last_tick = Instant::now();
@@ -83,8 +84,13 @@ fn run_demo(args: cli::DemoArgs) -> Result<()> {
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                app.handle_key(key);
+            match event::read()? {
+                Event::Key(key) => app.handle_key(key),
+                Event::Mouse(mouse) => {
+                    let area = terminal.size()?;
+                    app.handle_mouse(mouse, area.into());
+                }
+                _ => {}
             }
         }
 

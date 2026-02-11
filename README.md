@@ -33,6 +33,7 @@ Beautiful minimal TUI template with commands, themes, accessibility toggles, and
 - Commands: `demo`, `themes`, `keys`, `config` (`init`/`validate`)
 - Themes with accessible high-contrast and no-color modes
 - Reduced-motion toggle
+- Optional mouse input support in interactive mode (`--mouse` or `[demo] mouse = true`)
 - Demo showcase panels (tabs + gauge + table + scrolling list) for common widget patterns
 - Config file defaults for `demo` options and key bindings
 - Minimal, readable architecture
@@ -48,6 +49,7 @@ make dev
 cli-tui-starter demo --theme aurora
 cli-tui-starter demo --theme mono --high-contrast
 cli-tui-starter demo --config ~/.config/cli-tui-starter/config.toml --color --motion
+cli-tui-starter demo --mouse
 cli-tui-starter demo --no-tty
 cli-tui-starter demo --no-tty --ascii
 cli-tui-starter demo --no-tty --width 100 --height 28
@@ -84,6 +86,7 @@ no_color = false
 high_contrast = false
 reduced_motion = false
 ascii = false            # ASCII-only glyphs for `demo --no-tty`
+mouse = false            # enable mouse input for interactive `demo`
 
 [keys]
 cycle_theme = "t"
@@ -113,6 +116,7 @@ Precedence:
 - If some key combos do not arrive, check your terminal's own keyboard shortcuts first.
 - Use `cli-tui-starter demo --no-tty` to verify rendering without requiring an interactive TTY.
 - If colors look wrong, try `--no-color` or set `NO_COLOR=1`.
+- Mouse input is opt-in; use `--mouse` (or `mouse = true` in config) when your terminal supports mouse reporting.
 
 ## Docker
 Not applicable. This is a local terminal UI binary.

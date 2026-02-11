@@ -14,6 +14,7 @@ pub struct DemoSettings {
     pub high_contrast: bool,
     pub reduced_motion: bool,
     pub ascii: bool,
+    pub mouse: bool,
 }
 
 pub struct DemoRuntime {
@@ -51,6 +52,7 @@ struct DemoDefaultsRaw {
     high_contrast: Option<bool>,
     reduced_motion: Option<bool>,
     ascii: Option<bool>,
+    mouse: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -91,6 +93,7 @@ struct DemoDefaults {
     high_contrast: Option<bool>,
     reduced_motion: Option<bool>,
     ascii: Option<bool>,
+    mouse: Option<bool>,
 }
 
 #[derive(Debug, Clone)]
@@ -146,6 +149,7 @@ fn parse_config_bundle(contents: &str, source: &Path) -> Result<LoadedConfigBund
         high_contrast: raw.demo.high_contrast,
         reduced_motion: raw.demo.reduced_motion,
         ascii: raw.demo.ascii,
+        mouse: raw.demo.mouse,
     };
 
     let keys = apply_keys_overrides(KeyBindings::default(), raw.keys, source)?;
@@ -251,6 +255,14 @@ fn resolve_with_sources(
         defaults.reduced_motion.unwrap_or(false)
     };
 
+    let mouse = if args.mouse {
+        true
+    } else if args.no_mouse {
+        false
+    } else {
+        defaults.mouse.unwrap_or(false)
+    };
+
     // Only affects `demo --no-tty` rendering; keeping it in the config makes CI/docs output
     // deterministic without needing extra CLI flags.
     let ascii = if args.ascii {
@@ -265,6 +277,7 @@ fn resolve_with_sources(
         high_contrast,
         reduced_motion,
         ascii,
+        mouse,
     }
 }
 
@@ -301,6 +314,8 @@ high_contrast = false
 reduced_motion = false
 # Use ASCII glyphs for `demo --no-tty` output (avoids box-drawing characters).
 ascii = false
+# Enable mouse support in the interactive demo (off by default).
+mouse = false
 
 [keys]
 cycle_theme = "t"
@@ -362,6 +377,8 @@ mod tests {
             normal_contrast: false,
             reduced_motion: false,
             motion: false,
+            mouse: false,
+            no_mouse: false,
             config: None,
         }
     }
@@ -377,6 +394,7 @@ mod tests {
             high_contrast = false
             reduced_motion = true
             ascii = true
+            mouse = true
             "#,
             path,
         )
@@ -387,6 +405,7 @@ mod tests {
         assert_eq!(parsed.demo.high_contrast, Some(false));
         assert_eq!(parsed.demo.reduced_motion, Some(true));
         assert_eq!(parsed.demo.ascii, Some(true));
+        assert_eq!(parsed.demo.mouse, Some(true));
     }
 
     #[test]
@@ -466,6 +485,7 @@ mod tests {
         args.color = true;
         args.normal_contrast = true;
         args.motion = true;
+        args.no_mouse = true;
 
         let defaults = DemoDefaults {
             theme: Some(ThemeName::Solar),
@@ -473,6 +493,7 @@ mod tests {
             high_contrast: Some(true),
             reduced_motion: Some(true),
             ascii: Some(false),
+            mouse: Some(true),
         };
 
         let resolved = resolve_with_sources(&args, &defaults, true);
@@ -484,8 +505,27 @@ mod tests {
                 high_contrast: false,
                 reduced_motion: false,
                 ascii: false,
+                mouse: false,
             }
         );
+    }
+
+    #[test]
+    fn resolve_mouse_cli_enable_overrides_config_disable() {
+        let mut args = default_args();
+        args.mouse = true;
+
+        let defaults = DemoDefaults {
+            theme: None,
+            no_color: None,
+            high_contrast: None,
+            reduced_motion: None,
+            ascii: None,
+            mouse: Some(false),
+        };
+
+        let resolved = resolve_with_sources(&args, &defaults, false);
+        assert!(resolved.mouse);
     }
 
     #[test]
@@ -497,6 +537,7 @@ mod tests {
             high_contrast: Some(true),
             reduced_motion: Some(true),
             ascii: Some(false),
+            mouse: Some(true),
         };
 
         let resolved = resolve_with_sources(&args, &defaults, true);
@@ -504,6 +545,7 @@ mod tests {
         assert!(!resolved.no_color);
         assert!(resolved.high_contrast);
         assert!(resolved.reduced_motion);
+        assert!(resolved.mouse);
     }
 
     #[test]

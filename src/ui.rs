@@ -418,8 +418,7 @@ fn draw_footer(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::T
 fn draw_help(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::Theme) {
     let base = Style::default().fg(theme.palette.fg).bg(theme.palette.bg);
     let popup_area = centered_popup_rect(area);
-
-    let help_text = Paragraph::new(Text::from(vec![
+    let mut help_lines = vec![
         Line::from(Span::styled(
             "Keys",
             base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
@@ -455,23 +454,36 @@ fn draw_help(frame: &mut Frame, area: Rect, app: &App, theme: &crate::theme::The
             keys::key_list_display(&app.keymap.toggle_help)
         )),
         Line::from(format!("{}: quit", app.keymap.quit_label())),
-        Line::from(""),
-        Line::from(Span::styled(
-            "Accessibility",
+    ];
+
+    if app.mouse_enabled {
+        help_lines.push(Line::from(""));
+        help_lines.push(Line::from(Span::styled(
+            "Mouse (opt-in)",
             base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
-        )),
-        Line::from("- No-color mode for screen readers"),
-        Line::from("- High-contrast palette"),
-        Line::from("- Reduced motion toggle"),
-    ]))
-    .wrap(Wrap { trim: true })
-    .block(
-        Block::default()
-            .title(" Help ")
-            .borders(Borders::ALL)
-            .border_style(Style::default().fg(theme.palette.accent)),
-    )
-    .style(base);
+        )));
+        help_lines.push(Line::from("- Scroll wheel: move list selection"));
+        help_lines.push(Line::from("- Left click tabs: switch panel"));
+    }
+
+    help_lines.push(Line::from(""));
+    help_lines.push(Line::from(Span::styled(
+        "Accessibility",
+        base.fg(theme.palette.accent).add_modifier(Modifier::BOLD),
+    )));
+    help_lines.push(Line::from("- No-color mode for screen readers"));
+    help_lines.push(Line::from("- High-contrast palette"));
+    help_lines.push(Line::from("- Reduced motion toggle"));
+
+    let help_text = Paragraph::new(Text::from(help_lines))
+        .wrap(Wrap { trim: true })
+        .block(
+            Block::default()
+                .title(" Help ")
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(theme.palette.accent)),
+        )
+        .style(base);
 
     frame.render_widget(Clear, popup_area);
     frame.render_widget(help_text, popup_area);

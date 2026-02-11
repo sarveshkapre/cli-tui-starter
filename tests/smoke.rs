@@ -63,6 +63,15 @@ fn demo_no_tty_renders_static_preview() {
 }
 
 #[test]
+fn demo_no_tty_accepts_mouse_flag() {
+    let mut cmd = cargo_bin_cmd!("cli-tui-starter");
+    cmd.args(["demo", "--no-tty", "--mouse"])
+        .assert()
+        .success()
+        .stdout(contains("CLI TUI Starter"));
+}
+
+#[test]
 fn prints_help() {
     let mut cmd = cargo_bin_cmd!("cli-tui-starter");
     cmd.arg("--help").assert().success().stdout(contains(
@@ -100,6 +109,8 @@ fn demo_help_includes_config_and_override_flags() {
         .stdout(contains("--config"))
         .stdout(contains("--color"))
         .stdout(contains("--motion"))
+        .stdout(contains("--mouse"))
+        .stdout(contains("--no-mouse"))
         .stdout(contains("--normal-contrast"));
 }
 
@@ -153,6 +164,7 @@ fn config_init_writes_starter_config_to_default_xdg_path() {
     let path = root.join("cli-tui-starter").join("config.toml");
     let contents = fs::read_to_string(&path).expect("read config");
     assert!(contents.contains("[demo]"));
+    assert!(contents.contains("mouse = false"));
     assert!(contents.contains("[keys]"));
 }
 
