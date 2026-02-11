@@ -1,5 +1,21 @@
 # INCIDENTS
 
+## 2026-02-11 - Local quality-gate sequencing mistake during automation run
+- Status: Resolved
+- Impact:
+  - Local `make check` failed once with a formatting diff before final validation.
+  - No broken commit was pushed; failure was caught and corrected in-session.
+- Root cause:
+  - `make check` was started while formatting changes were still being applied, creating an avoidable transient failure.
+- Detection evidence:
+  - `make check` output showed `cargo fmt --all -- --check` diffs in `src/app.rs` and `src/ui.rs`.
+- Fix:
+  - Re-run validation in strict sequence: `cargo fmt` followed by `make check`.
+  - Continue only after full pass.
+- Prevention rules:
+  - Never run repo quality gate commands concurrently with formatter runs.
+  - Treat any formatting drift as a stop-the-line signal before further validation.
+
 ## 2026-02-09 - Windows CI failures after adding golden snapshot tests
 - Status: Resolved
 - Impact:

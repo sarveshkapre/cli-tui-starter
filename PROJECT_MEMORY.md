@@ -1,5 +1,24 @@
 # PROJECT_MEMORY
 
+## 2026-02-11 - Recent Decisions
+- Date | Decision | Why | Evidence | Commit | Confidence | Trust label
+- 2026-02-11 | Ship opt-in mouse support for interactive demo via config and CLI (`[demo] mouse`, `--mouse/--no-mouse`) with wheel list scrolling and tab click switching. | This was the highest-impact open parity gap in roadmap/backlog and is safe because default behavior remains unchanged. | `src/cli.rs`, `src/config.rs`, `src/main.rs`, `src/terminal.rs`, `src/app.rs`, `src/ui.rs`, `tests/smoke.rs`; `make check`; `cargo run -- demo --no-tty --mouse --width 80 --height 24`; `XDG_CONFIG_HOME=<tmp> cargo run -- config validate` | `b4a628442c4ad949fbe8ccb2697154a436c109c9` | High | Trusted (local code/tests + CI)
+- 2026-02-11 | Keep bounded market-scan findings as guidance only; adapt patterns, not code/assets. | External ecosystem guidance helps prioritize parity work but is untrusted by policy and must be validated locally. | Ratatui templates/docs, Bubble Tea/Bubbles help model, Textual input/events docs (links recorded in `CLONE_FEATURES.md`). | N/A | Medium | Untrusted (external web/docs)
+
+## 2026-02-11 - Mistakes And Fixes
+- Mistake: Triggered `make check` while a formatter run was still in flight, which caused a transient formatting gate failure.
+- Root cause: I launched verification in parallel with formatting instead of sequencing commands.
+- Fix: Re-ran in strict order (`cargo fmt` then `make check`) and proceeded only after full green.
+- Prevention rule: Never run quality gate commands concurrently with formatters in this repo.
+
+## 2026-02-11 - Verification Evidence
+- `gh issue list --state open --limit 50 --json number,title,author,labels,updatedAt,url` (pass; output `[]`, no owner/bot issues to prioritize)
+- `gh run list --limit 15 --json databaseId,headSha,conclusion,status,event,name,workflowName,createdAt,updatedAt,url` (pass; recent completed runs were successful)
+- `cargo fmt && make check` (pass)
+- `cargo run -- demo --no-tty --mouse --width 80 --height 24 | sed -n '1,8p'` (pass)
+- `tmp=$(mktemp -d); mkdir -p \"$tmp/cli-tui-starter\"; cat > \"$tmp/cli-tui-starter/config.toml\" ...; XDG_CONFIG_HOME=\"$tmp\" cargo run -- config validate` (pass)
+- `gh run watch 21895492395 --exit-status` (pass; check/windows-test/gitleaks all green for commit `b4a628442c4ad949fbe8ccb2697154a436c109c9`)
+
 ## 2026-02-10 - Harden terminal restoration on demo exit and setup errors
 - Decision: Harden `TerminalGuard` so the cursor is always shown on exit, and raw mode is disabled if entering the alternate screen fails after raw mode has been enabled.
 - Why:

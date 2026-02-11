@@ -8,13 +8,21 @@
 
 ## Candidate Features To Do
 ### Backlog
-- [ ] P2: Add optional mouse input support behind explicit config/CLI opt-in (`[demo] mouse = true`) and document accessibility tradeoffs.
-- [ ] P2: Add a `--theme random` option and persist last-used theme to config on exit (opt-in).
-- [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading).
-- [ ] P3: Add a `demo --record` mode that writes key events + terminal size to a file for reproducible UI debugging.
-- [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, ensure changelog bumped, and print next release steps.
+- [ ] P2: Add a minimal form/text-input demo panel to improve starter parity for stateful widgets. Score: impact 5, effort 4, strategic fit 5, differentiation 3, risk 2, confidence 3.
+- [ ] P2: Add a `--theme random` option and persist last-used theme to config on exit (opt-in). Score: impact 4, effort 3, strategic fit 4, differentiation 3, risk 2, confidence 3.
+- [ ] P2: Add `demo --record` mode that writes key events + terminal size to a file for reproducible UI debugging. Score: impact 4, effort 4, strategic fit 4, differentiation 4, risk 2, confidence 3.
+- [ ] P2: Add JSON mode to `cli-tui-starter keys` with key source metadata (default vs config) for richer tooling. Score: impact 3, effort 2, strategic fit 4, differentiation 2, risk 1, confidence 4.
+- [ ] P2: Add a `config lint` command to flag conflicting keymap ergonomics (for example, overloaded navigation keys). Score: impact 3, effort 3, strategic fit 4, differentiation 2, risk 1, confidence 3.
+- [ ] P3: Add release automation helper (`cargo xtask release-check`) to run `make check`, verify changelog/version alignment, and print release steps. Score: impact 3, effort 2, strategic fit 4, differentiation 1, risk 1, confidence 4.
+- [ ] P3: Add a minimal plugin hook for additional panels (compile-time feature flag, no runtime loading). Score: impact 3, effort 4, strategic fit 3, differentiation 4, risk 3, confidence 2.
+- [ ] P3: Add a startup self-check command (`doctor`) for terminal capability and config diagnostics. Score: impact 3, effort 3, strategic fit 3, differentiation 2, risk 2, confidence 3.
+- [ ] P3: Add macOS CI test leg to complement Linux/Windows and catch terminal/event drift. Score: impact 3, effort 1, strategic fit 3, differentiation 1, risk 1, confidence 4.
+- [ ] P3: Add a tiny benchmark target for static preview rendering to catch accidental performance regressions. Score: impact 2, effort 2, strategic fit 3, differentiation 2, risk 1, confidence 4.
+- [ ] P3: Add optional shell completion generation (`completions`) for Bash/Zsh/Fish. Score: impact 2, effort 2, strategic fit 3, differentiation 1, risk 1, confidence 4.
 
 ## Implemented
+- [x] 2026-02-11: Added opt-in mouse support for interactive demo mode with config + CLI controls (`[demo] mouse = true`, `demo --mouse/--no-mouse`), wheel scrolling for list navigation, and tab switching via left click.
+  Evidence: `src/cli.rs`, `src/config.rs`, `src/main.rs`, `src/terminal.rs`, `src/app.rs`, `src/ui.rs`, `tests/smoke.rs`; commands `make check`, `cargo run -- demo --no-tty --mouse --width 80 --height 24`, `XDG_CONFIG_HOME=<tmp> cargo run -- config validate`.
 - [x] 2026-02-10: Hardened terminal restoration to always show the cursor on exit and to disable raw mode if entering the alternate screen fails after raw mode is enabled.
   Evidence: `src/terminal.rs`; command `make check`.
 - [x] 2026-02-10: Expanded the demo showcase into tabbed panels (Overview + Scrolling List) with configurable key bindings for panel switching and list navigation; updated in-app help + `keys` output; added a UI regression test for the list panel.
@@ -62,18 +70,18 @@
 
 ## Insights
 - Gap map (trusted, local):
-  - Missing: opt-in mouse support.
-  - Weak: demo breadth (needs a minimal form/text-input example).
-  - Parity: help overlay + configurable key bindings (now present).
+  - Missing: form/text-input style demo panel for stateful widget patterns.
+  - Weak: release ergonomics still rely on manual checklist flow.
+  - Parity: help overlay + configurable key bindings + optional mouse input.
   - Differentiator: CI-friendly `demo --no-tty` plus golden UI snapshots.
 - CI failure pattern from runs `21557276579`, `21557279815`, and `21557375125` is a flaky gitleaks push-range scan on shallow checkout (`fetch-depth: 1`).
-- No open GitHub issues from `sarveshkapre` or trusted bot accounts as of 2026-02-09.
+- No open GitHub issues from `sarveshkapre` or trusted bot accounts as of 2026-02-11.
 - A new advisory (`RUSTSEC-2026-0009`) affected transitive `time`; lockfile updates should be part of routine maintenance before release tagging.
 - Market expectations (untrusted, external):
   - Most mature TUIs provide a discoverable in-app help overlay and user-customizable keybindings (often via config).
-  - Tabs and scrolling list widgets are common in TUI demo galleries/templates (useful as a starter's "widget cookbook").
+  - Tabs, list widgets, and simple mouse affordances are common in modern TUI starter demos.
   - The Ratatui ecosystem explicitly encourages snapshot-style testing using `TestBackend` to catch UI regressions.
-  - Several popular TUI stacks (e.g. Charm's Bubble Tea) include a compact, auto-generated help view derived from key bindings.
+  - Several popular TUI stacks (for example Bubble Tea/Bubbles and Textual) expose first-class key binding help and mouse event models.
     Sources:
     - https://ratatui.rs
     - https://github.com/ratatui/templates
@@ -81,8 +89,10 @@
     - https://ratatui.rs/recipes/testing/snapshots/
     - https://ratatui.rs/widgets/tabs/
     - https://ratatui.rs/widgets/list/
+    - https://github.com/charmbracelet/bubbletea
     - https://github.com/charmbracelet/bubbles
     - https://github.com/charmbracelet/bubbles/tree/master/help
+    - https://textual.textualize.io/guide/events/
     - https://textual.textualize.io/guide/input/#bindings
     - https://github.com/vadimdemedes/ink
 - Product insight:
@@ -91,9 +101,9 @@
 ## Notes
 - This file is maintained by the autonomous clone loop.
 
-### Auto-discovered Open Checklist Items (2026-02-09)
-- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] `make check` passes locally (as of 2026-02-09)
-- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] CI is green on main (run `21821839896`)
+### Auto-discovered Open Checklist Items (2026-02-11)
+- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] `make check` passes locally (as of 2026-02-11)
+- /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] CI is green on main (run `21855749009`)
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [x] `CHANGELOG.md` updated
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [ ] Tag version `vX.Y.Z`
 - /Users/sarvesh/code/cli-tui-starter/docs/RELEASE.md:- [ ] Publish GitHub release

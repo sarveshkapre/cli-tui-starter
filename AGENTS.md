@@ -9,7 +9,7 @@
 
 ## Mutable Repo Facts
 - Objective: Keep cli-tui-starter production-ready. Current focus: CLI TUI Starter. Find the highest-impact pending work, implement it, test it, and push to main.
-- Last updated: 2026-02-10T07:16:22Z
+- Last updated: 2026-02-11T06:48:03Z
 
 ## Verification Policy
 - Record exact verification commands and pass/fail outcomes in PROJECT_MEMORY.md.
