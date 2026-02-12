@@ -71,3 +71,14 @@
   - Treat audit failures as release blockers and remediate in the same session.
   - Re-run full `make check` after any CI/workflow fix commit to catch unrelated ecosystem drift.
   - Keep dependency lockfile updates scoped and evidence-backed (command + resulting version diff).
+
+### 2026-02-12T20:01:29Z | Codex execution failure
+- Date: 2026-02-12T20:01:29Z
+- Trigger: Codex execution failure
+- Impact: Repo session did not complete cleanly
+- Root Cause: codex exec returned a non-zero status
+- Fix: Captured failure logs and kept repository in a recoverable state
+- Prevention Rule: Re-run with same pass context and inspect pass log before retrying
+- Evidence: pass_log=logs/20260212-101456-cli-tui-starter-cycle-2.log
+- Commit: pending
+- Confidence: medium
